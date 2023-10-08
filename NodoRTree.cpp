@@ -1,25 +1,44 @@
 #include <iostream>
 #include <vector>
-#include <cstdlib> // Necesario para std::rand() y std::srand()
+#include <cstdlib> //rand() 
+#include <cstdint>
 
+// Estructura para representar un punto en el plano 2D ==========================
 struct Punto
 {
-    int x;
-    int y;
+    uint32_t x;
+    uint32_t y;
 
-    Punto(int x, int y) : x(x), y(y) {}
+    Punto(uint32_t x, uint32_t y) : x(x), y(y) {}
+};
+// Función para calcular el centro de un Rectángulo ======================
+Punto calcularPuntoMedio(const Punto& inferiorIzquierdo, const Punto& superiorDerecho)
+{
+    double medioX = (inferiorIzquierdo.x + superiorDerecho.x) / 2.0;
+    double medioY = (inferiorIzquierdo.y + superiorDerecho.y) / 2.0;
+
+    return Punto(medioX, medioY);
 };
 
+// Sobrecarga del operador de salida para imprimir un objeto Punto ======================
+std::ostream& operator<<(std::ostream& os, const Punto& punto)
+{
+    os << "(" << punto.x << ", " << punto.y << ")";
+    return os;
+};
+
+// Estructura para representar un rectangulo según 2 Puntos ======================
 struct Rectangulo
 {
-    int x1;
-    int y1;
-    int x2;
-    int y2;
+    Punto inf_izq;
+    Punto sup_der;
+    Punto centro;
 
-    Rectangulo(int x1, int y1, int x2, int y2) : x1(x1), y1(y1), x2(x2), y2(y2) {}
+    Rectangulo(Punto inf_izq, Punto sup_der) : inf_izq(inf_izq), sup_der(sup_der), centro(calcularPuntoMedio(inf_izq, sup_der)) {}
 };
 
+// Clase NodoRTree que representa un nodo del RTree a partir de una lista de claves(Rectangulos)
+// y una lista de hijos(Nodos)
 class NodoRTree
 {
 public:
@@ -67,32 +86,10 @@ bool NodoRTree::estaLleno() const
     return static_cast<int>(rectangulos_.size()) >= m; // m es el límite máximo de rectángulos
 }
 
-int randomNum(int minimo = 0, int maximo = 100)
+uint32_t randomNum(uint32_t minimo = 0, uint32_t maximo = 500000)
 {
     // Genera un número aleatorio entre minimo y (maximo - 1)
-    int numeroAleatorio = std::rand() % (maximo - minimo) + minimo;
+    uint32_t numeroAleatorio = std::rand() % (maximo - minimo) + minimo;
     return numeroAleatorio;
 }
 
-int main()
-{
-    int m = 5;
-
-    NodoRTree nodo(false, m); // Crear un nodo interno con límite de 5 rectángulos
-
-    for (int i = 1; i <= 6; i++)
-    {
-        std::cout << "Iteración " << i << std::endl;
-        Rectangulo rect(randomNum(), randomNum(), randomNum(), randomNum());
-        if (nodo.insertarRectangulo(rect))
-        {
-            std::cout << "Rectángulo insertado con éxito." << std::endl;
-        }
-        else
-        {
-            std::cout << "No se pudo insertar el rectángulo." << std::endl;
-        }
-    }
-
-    return 0;
-}
