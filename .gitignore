@@ -60,3 +60,7 @@ install_manifest.txt
 /sys/
 /tmp/
 /var/
+
+
+# carpeta de compilados
+output/
