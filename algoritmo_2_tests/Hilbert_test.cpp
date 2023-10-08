@@ -1,21 +1,24 @@
 #include <iostream>
+#include <thread> 
+#include <chrono> 
 #include <cmath>
-#include "Hilbert.cpp"
+#include "../algoritmo_2/Hilbert.cpp"
 
 int main()
-{
-    std::vector<std::tuple<Punto, int>> puntosConInt = {
-        std::make_tuple(Punto(randomNum(), randomNum()), 0),
-        std::make_tuple(Punto(randomNum(), randomNum()), 1),
-        std::make_tuple(Punto(randomNum(), randomNum()), 2),
-        std::make_tuple(Punto(randomNum(), randomNum()), 3)};
+{   
+    uint32_t n = std::pow(2,10);
+    std::vector<std::tuple<Punto, uint32_t>> puntosConInt;
+    for (uint32_t i = 0; i < n; ++i) {
+        Punto punto(randomNum(), randomNum());
+        puntosConInt.push_back(std::make_tuple(punto, i));
+    }
 
     std::cout << "Puntos originales:" << std::endl;
     for (const auto &tupla : puntosConInt)
     {
         const Punto &punto = std::get<0>(tupla);
-        int valor = std::get<1>(tupla);
-        std::cout << "(" << punto.x << ", " << punto.y << ") - Valor: " << valor << std::endl;
+        uint32_t indice = std::get<1>(tupla);
+        std::cout << "(" << punto.x << ", " << punto.y << ") - Indice: " << indice << std::endl;
     }
 
     uint32_t minX = std::numeric_limits<uint32_t>::max();
@@ -41,11 +44,15 @@ int main()
 
     curvaDeHilbert(puntosConInt, minX, minY, maxX, maxY, nivel);
 
+
+    // Pausa durante 5 segundos
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
     std::cout << "Puntos en orden de la curva de Hilbert:" << std::endl;
     for (const auto &tupla : puntosConInt)
     {
         const Punto &punto = std::get<0>(tupla);
-        int indice = std::get<1>(tupla);
+        uint32_t indice = std::get<1>(tupla);
         std::cout << "(" << punto.x << ", " << punto.y << ") - Index: " << indice << std::endl;
     }
 

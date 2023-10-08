@@ -6,7 +6,7 @@
 #include "NodoRTree.cpp"
 
 // Función auxiliar para comparar tuplas por su componente de tipo Punto
-bool compararTuplas(const std::tuple<Punto, int> &a, const std::tuple<Punto, int> &b)
+bool compararTuplas(const std::tuple<Punto, uint32_t> &a, const std::tuple<Punto, uint32_t> &b)
 {
     const Punto &puntoA = std::get<0>(a);
     const Punto &puntoB = std::get<0>(b);
@@ -16,8 +16,8 @@ bool compararTuplas(const std::tuple<Punto, int> &a, const std::tuple<Punto, int
     return puntoA.y < puntoB.y;
 }
 
-// Función principal que ordena una lista de tuplas (Punto,int) segun su posición en la curva de Hilbert
-void curvaDeHilbert(std::vector<std::tuple<Punto, int>> &puntos, uint32_t minX, uint32_t minY, uint32_t maxX, uint32_t maxY, uint32_t nivel)
+// Función principal que ordena una lista de tuplas (Punto,uint32_t) segun su posición en la curva de Hilbert
+void curvaDeHilbert(std::vector<std::tuple<Punto, uint32_t>> &puntos, uint32_t minX, uint32_t minY, uint32_t maxX, uint32_t maxY, uint32_t nivel)
 {   
     //std::cout << "Nivel:" << nivel<< std::endl; // (debug)
     if (nivel <= 0)
@@ -27,9 +27,9 @@ void curvaDeHilbert(std::vector<std::tuple<Punto, int>> &puntos, uint32_t minX, 
     uint32_t midY = (minY + maxY) / 2;
 
     // Separamos por cuadrantes
-    std::vector<std::tuple<Punto, int>> cuadrante1, cuadrante2, cuadrante3, cuadrante4;
+    std::vector<std::tuple<Punto, uint32_t>> cuadrante1, cuadrante2, cuadrante3, cuadrante4;
 
-    for (std::tuple<Punto, int> &tupla : puntos)
+    for (std::tuple<Punto, uint32_t> &tupla : puntos)
     {
         const Punto &punto = std::get<0>(tupla);
         // Dividimos la lista según el cuadrante que les corresponde
