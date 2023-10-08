@@ -1,32 +1,62 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
+# Archivos generados por el compilador y el enlazador
 *.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
 *.out
-*.app
+*.exe
+
+# Archivos binarios generados
+bin/
+build/
+
+# Dependencias y directorios generados por CMake
+CMakeFiles/
+CMakeCache.txt
+CMakeScripts/
+CMakeScripts/
+CMakeDoxyfile.in
+cmake_install.cmake
+
+# Archivos de construcción de Make
+Makefile
+
+# Archivos generados por IDEs comunes
+.vscode/
+.idea/
+.cproject
+.project
+*.suo
+*.user
+*.sdf
+
+# Archivos de respaldo y archivos temporales generados por el editor
+*~
+*.swp
+*.swo
+*.bak
+*.orig
+
+# Archivos de compilación de Visual Studio
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Carpeta de compilación de Xcode
+*.xcodeproj/
+xcuserdata/
+
+# Ejecutables generados por CMake
+install_manifest.txt
+
+# Bibliotecas de sistema y archivos de configuración específicos
+/bin/
+/build/
+/lib/
+/include/
+/bin/
+/etc/
+/usr/
+/libexec/
+/sbin/
+/sys/
+/tmp/
+/var/
