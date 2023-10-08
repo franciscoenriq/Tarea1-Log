@@ -65,3 +65,4 @@ install_manifest.txt
 # carpeta de compilados
 output/
 .vscode/*
+.vscode/settings.json
