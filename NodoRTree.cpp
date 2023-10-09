@@ -11,6 +11,7 @@ struct Punto
 
     Punto(uint32_t x, uint32_t y) : x(x), y(y) {}
 };
+
 // Función para calcular el centro de un Rectángulo ======================
 Punto calcularPuntoMedio(const Punto& inferiorIzquierdo, const Punto& superiorDerecho)
 {
