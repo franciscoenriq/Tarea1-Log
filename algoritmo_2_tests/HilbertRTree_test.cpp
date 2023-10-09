@@ -1,6 +1,7 @@
 #include "../algoritmo_2/HilbertRTree.cpp"
 
-int main(){
+int main()
+{
 
     return 0;
 }

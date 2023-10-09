@@ -1,60 +1,38 @@
-#include <iostream>
-#include <thread> 
-#include <chrono> 
-#include <cmath>
 #include "../algoritmo_2/Hilbert.cpp"
 
 int main()
-{   
-    uint32_t n = std::pow(2,10);
-    std::vector<std::tuple<Punto, uint32_t>> puntosConInt;
-    for (uint32_t i = 0; i < n; ++i) {
-        Punto punto(randomNum(), randomNum());
-        puntosConInt.push_back(std::make_tuple(punto, i));
-    }
+{
+    // Prueba 1
+    std::vector<std::tuple<Punto, int>> puntos1;
+    puntos1.push_back(std::make_tuple(Punto(3, 2), 1)); // d=11
+    puntos1.push_back(std::make_tuple(Punto(5, 1), 2)); // d=2
+    puntos1.push_back(std::make_tuple(Punto(2, 4), 3)); // d=14
+    puntos1.push_back(std::make_tuple(Punto(1, 5), 4)); // d=2
 
-    std::cout << "Puntos originales:" << std::endl;
-    for (const auto &tupla : puntosConInt)
+    ordenarHilbert(puntos1);
+
+    std::cout << "Prueba 1:" << std::endl;
+    for (const auto &punto : puntos1)
     {
-        const Punto &punto = std::get<0>(tupla);
-        uint32_t indice = std::get<1>(tupla);
-        std::cout << "(" << punto.x << ", " << punto.y << ") - Indice: " << indice << std::endl;
+        std::cout << std::get<1>(punto) << " ";
     }
+    std::cout << std::endl;
 
-    uint32_t minX = std::numeric_limits<uint32_t>::max();
-    uint32_t minY = std::numeric_limits<uint32_t>::max();
-    uint32_t maxX = std::numeric_limits<uint32_t>::min();
-    uint32_t maxY = std::numeric_limits<uint32_t>::min();
+    // Prueba 2
+    std::vector<std::tuple<Punto, int>> puntos2;
+    puntos2.push_back(std::make_tuple(Punto(5, 5), 1)); // d=2
+    puntos2.push_back(std::make_tuple(Punto(3, 4), 2)); // d=15
+    puntos2.push_back(std::make_tuple(Punto(2, 3), 3)); // d= 9
+    puntos2.push_back(std::make_tuple(Punto(1, 2), 4)); // d=7
 
-    for (const auto &tupla : puntosConInt)
+    ordenarHilbert(puntos2);
+
+    std::cout << "Prueba 2:" << std::endl;
+    for (const auto &punto : puntos2)
     {
-        const Punto &punto = std::get<0>(tupla);
-        minX = std::min(minX, punto.x);
-        minY = std::min(minY, punto.y);
-        maxX = std::max(maxX, punto.x);
-        maxY = std::max(maxY, punto.y);
+        std::cout << std::get<1>(punto) << " ";
     }
-    uint32_t ancho_espacio = maxX-minX;
-    uint32_t alto_espacio = maxY-minY;
-    uint32_t lado_cuadrado=std::max(ancho_espacio, alto_espacio);
-    uint32_t lado_potencia_2 = siguientePotenciaDeDos(lado_cuadrado);
-
-    uint32_t segmento = 128; // TODO: dejaremos segmentos de 128 pero debe ser el mínimo que cubra el plano (pendiente)
-    uint32_t nivel = log2(lado_potencia_2/segmento);
-
-    curvaDeHilbert(puntosConInt, minX, minY, maxX, maxY, nivel);
-
-
-    // Pausa durante 5 segundos
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-
-    std::cout << "Puntos en orden de la curva de Hilbert:" << std::endl;
-    for (const auto &tupla : puntosConInt)
-    {
-        const Punto &punto = std::get<0>(tupla);
-        uint32_t indice = std::get<1>(tupla);
-        std::cout << "(" << punto.x << ", " << punto.y << ") - Index: " << indice << std::endl;
-    }
+    std::cout << std::endl;
 
     return 0;
 }
