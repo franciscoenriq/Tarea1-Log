@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <tuple>
 #include <limits>
-#include "NodoRTree.cpp"
+#include "../NodoRTree.cpp"
 
 // Función auxiliar para comparar tuplas por su componente de tipo Punto
 bool compararTuplas(const std::tuple<Punto, uint32_t> &a, const std::tuple<Punto, uint32_t> &b)
