@@ -51,6 +51,8 @@ class NodoRTree{
     /* función para insertar un rectángulo en el nodo */
     bool insertarRectangulo(const Rectangulo &rectangulo);
     void insertarHijo(const NodoRTree hijo);
+    /*Función para rescatar los rectángulos de un nodo*/
+    void *rescatarRectangulos();
     private:
         bool esHoja_;
         /* cada nodo contiene k rectángulos de los MBR de sus hijos*/
@@ -73,6 +75,13 @@ NodoRTree::~NodoRTree(){
 void NodoRTree::insertarHijo(NodoRTree hijo){
     hijos_.push_back(&hijo);
 
+}
+/* Función para rescatar los rectángulos de un nodo */
+void* NodoRTree::rescatarRectangulos(){
+    if (esHoja_){
+        return (&rectangulos_[0]);
+    }
+    return &rectangulos_;
 }
 /* Función para insertar rectángulos en un nodo */
 bool NodoRTree::insertarRectangulo(const Rectangulo &rectangulo)
