@@ -102,36 +102,82 @@ Rectangulo calcularMBR(vector<Rectangulo>& listaRectangulos,int start, int end) 
     // retornamos el MBR calculado como un nuevo rectángulo
     return Rectangulo(Punto(minX, minY), Punto(maxX, maxY));
 }
+/* Función que construye un grupo de nodos hoja en base a una lista de rectángulos*/
+vector <NodoRTree> makeLeafs(vector<Rectangulo> &rects){
+    //tamaño del vector
+    int n = sizeof(rects)/sizeof(rects[0]);
+    //se crea el vector de nodos
+    vector<NodoRTree> nodos(n,NodoRTree(true,1));
+    int i = 0;
+    for(Rectangulo r: rects){
+        nodos[i].insertarRectangulo(r);
+        i++;
+    }
+    return nodos;
+} 
 /*
-Función que genera una lista de nodos en base a una lista de rectángulos. 
+Función que  genera un único nodo raíz en base a una lista de rectángulos. 
 Recibe:
   r_vect:  un vector de rectángulos, m: la cantidad máxima de nodos 
 Entrega: 
-   un NodoRTree */
-vector <NodoRTree> nX_RTree(vector <Rectangulo> &r_vect, int m){
-    // cantidad de rectángulos a considerar
+   un  NodoRTree 
+*/
+NodoRTree nX_RTree(vector <Rectangulo> &r_vect, int m){
+    // creación del nodo a retornar
+    NodoRTree Rtree = NodoRTree(false,m);
+    // se calcula la cantidad total  de rectángulos  a calcular
     int R_totales = sizeof(r_vect) / sizeof(r_vect[0]);
-    //se inicializa un vector con todos los nodos necesarios para cubrir los rectángulos
-    vector <NodoRTree> nodos(R_totales/m,NodoRTree(false,m));
+    //Se ordenan los rectángulos del vector de entrada
+    xquickSort(r_vect,0,R_totales - 1);
+    int i = 0;
 
-    //1. Se ordenan los rectángulos. Esta funcion los ordena con respecto a la abscisa de su centro de menor a mayor
-    xquickSort(r_vect,0,R_totales-1);
+    // Si la cantidad de rectángulos total cabe en el nodo, se añaden los rectángulos como nodos hoja
+    if (R_totales<=m){
+        vector <NodoRTree> hijos = makeLeafs(r_vect);
+        for (NodoRTree h : hijos){
+            Rtree.insertarHijo(h);
+            Rtree.insertarRectangulo(r_vect[i]);
+            i++;
+        }
+    }
+    else{
+        /* se calcula la cantidad de iteraciones que serán necesarias para a los rectangulos.
+           O iteraciones = lo del if:  
+                Se tiene un único nodo no hoja que contiene a lo  más m rectángulos y m punteros a 
+                nodos hoja que  contienen cada uno uno de los rectángulos anteriores.
+             
+           1 iteración = bastan nr<=m MBRs para cubrir todos los rectángulos:
+              => el nodo Rtree contiene nr MBRs y nr punteros a los nodos, los cuales cumplen lo 
+              anterior
+            ... etc ...
+        */
+        int rt = R_totales;
+        while(rt > m){
+            rt = rt/m;
+            i++;
+        }
+        // se crea un vector de punteros de arreglos que contendrán los resultados de cada iteración
+        vector <NodoRTree**> ptrs[3];
+        //se calcula el tamaño de la partición de  rectángulos
+        int part = (R_totales/m);
+        for (rt; rt>0; rt--){
+            vector<NodoRTree**> 
+            for(){
 
-    //2. Se crean MBR que  cubran un máximo de m rectángulos cada uno
-    vector <Rectangulo> mbrs(R_totales/m,Rectangulo(Punto(0,0),Punto(0,0)));
-    int counter = 0;
-    int index = 0;
-    int n_nodo = 0;
-    // 3. Se generan los mbr para grupos de m rectángulos y se insertan tanto en el arreglo como en los nodos
-    for (int rect = 0; rect < R_totales/m;rect++){  
-        mbrs[index] = calcularMBR(r_vect,counter,counter+m);
-        //se inserta en el nodo mientras no esté lleno
-        if (!nodos[n_nodo].insertarRectangulo(mbrs[index]))
-            //si está lleno, se inserta en el siguiente
-            nodos[n_nodo++].insertarRectangulo(mbrs[index]);
-        index++;
-        counter+=m;
+            }
+                ptrs->insert(part,NodoRTree(false,m));
+            // Se genera un vector de  MBR  rectángulos para el grupo de m rectángulos, 
+            vector <Rectangulo> mbrs(R_totales/m,Rectangulo(Punto(0,0),Punto(0,0)));
+            int counter = 0;
+            for (int rect = 0; rect < R_totales/m; rect++){  
+                mbrs[rect] = calcularMBR(r_vect,counter,counter+m);
+                }
+                counter+=m;
+                nodos->
+            }
+            
+        }
     }
 
-return nodos;
+return Rtree;
 }
