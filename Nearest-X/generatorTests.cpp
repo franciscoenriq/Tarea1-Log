@@ -33,19 +33,19 @@ int main(){
         }
     }
     //prueba de crear un arreglo de rectángulos en base a un arreglo de puntos
-    int N;
+    int N=6;
       d_int ptr[]={9,8,8,8,
                     2,1,6,7,
                     1,1,20,2,
-                    9,0,0,9,
+                    9,0,10,9,
+                    3,1,2,5,
                     12,1,1,2};
-    vector <Rectangulo> r =  makeRectArray(ptr,20);
+    vector <Rectangulo> r =  makeRectArray(ptr,N*4);
     for (int i = 0; i<5; i++){
 
         cout << "Rectangulo "<<i+1 << '\n'
         << "p1: "<<r[i].p1 <<" p2: "<< r[i].p2 << endl;
     }
-    N = 5;
     //prueba de xquicksort
     xquickSort(r,0,N-1);
     for (int i = 0;i<N;i++){
