@@ -43,7 +43,13 @@ struct Rectangulo{
 vector <Rectangulo> makeRectArray(d_int arr[], d_int N){
     int L = N >> 2;
     vector<Rectangulo>vec(L, Rectangulo(Punto(0,0),Punto(0,0)));
-    for (int i = 0; i  <L; i++){
+    //el primer primerísimo elemento debe ser insertado a mano
+        d_int x1 =arr[0];
+        d_int y1 =arr[0];
+        d_int x2 =arr[0];
+        d_int y2 =arr[0];
+        vec[0] = Rectangulo(Punto(x1,y1),Punto(x2,y2)); 
+    for (int i = 1; i  <L; i++){
         d_int x1 =arr[i*4];
         d_int y1 =arr[i*4+1];
         d_int x2 =arr[i*4+2];
