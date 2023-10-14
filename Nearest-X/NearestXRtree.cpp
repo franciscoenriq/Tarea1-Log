@@ -48,7 +48,7 @@ Rectangulo calcularMBR(vector<Rectangulo>& listaRectangulos,int start, int end) 
 void grabarVector(vector<int> vect){
     int size = sizeof(vect)/sizeof(vect[0]);
     FILE *arch;
-    arch = fopen("xRTree.bin","wt");
+    arch = fopen("xRTree","wt");
     for (int data : vect){
         fwrite(&data,sizeof(int),1,arch);
     }
@@ -77,7 +77,8 @@ void nX_RTree(vector <Rectangulo> &r_vect, int m){
     //vector que contendrá los datos a insertar en la interación actual
     vector <int> arr(1,0);
     // se calcula la cantidad de rectángulos totales
-    int R_totales = sizeof(r_vect) / sizeof(r_vect[0]);
+    int R_totales = r_vect.size();
+    cout<<"Size of vector: "<< R_totales <<endl;
     //Se ordenan los rectángulos del vector de entrada
     xquickSort(r_vect,0,R_totales - 1);
     //se escribe r_vect en memoria como un nodo hijo (anteponiendo un offset a nulo)
@@ -92,6 +93,7 @@ void nX_RTree(vector <Rectangulo> &r_vect, int m){
     //se calcula la cantidad de mbrs a calcular
     //Notar que esto también corresponde a cuantos nodos se crearán en esta iteración
     int n_mbr = R_totales/m;
+    cout<<"Starting..."<<"MBRs to calculate: "<< n_mbr<<endl;
 
     // se calculan los mbrs
     vector <Rectangulo> mbrs(n_mbr,Rectangulo(Punto(0,0),Punto(0,0)));
@@ -99,6 +101,10 @@ void nX_RTree(vector <Rectangulo> &r_vect, int m){
     for (int rect = 0; rect < n_mbr; rect++){  
         mbrs[rect] = calcularMBR(r_vect,rect*m,rect*(m+1)); 
     }
+       //DEBUG
+        for (Rectangulo x :mbrs){
+            cout<<"MBR: "<<x.p1.x<<','<<x.p1.y<<';'<<x.p2.x<<','<<x.p2.y<<endl;
+        }
 
     // se setablece la posición del primer nodo hijo
     int offset = 1;
@@ -125,6 +131,10 @@ void nX_RTree(vector <Rectangulo> &r_vect, int m){
         /* se crean vectores para contener los mbrs anteriores y a los actuales. 
           Notar que el tamañano efectivamente utilizado nunca puede ser mayor a n_mbr original */
         vector <Rectangulo> ans_mbrs = mbrs;
+        //DEBUG
+        for (Rectangulo x :ans_mbrs){
+            cout<<"MBR: "<<x.p1.x<<','<<x.p1.y<<';'<<x.p2.x<<','<<x.p2.y<<endl;
+        }
         vector <Rectangulo> new_mbrs(n_mbr/m,Rectangulo(Punto(0,0),Punto(0,0)));
 
 
@@ -154,6 +164,7 @@ void nX_RTree(vector <Rectangulo> &r_vect, int m){
                 } 
             }
             // ahora se new_mbr debe ser ans_mbr
+            int offset = 1;
             for (int i = 0; i<nmbr; i++){
                 ans_mbrs[i]=new_mbrs[i];
             }
