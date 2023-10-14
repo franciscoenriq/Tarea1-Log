@@ -16,13 +16,13 @@ int main(){
     int m = 5;
     //prueba de crear un arreglo de rectángulos en base a un arreglo de puntos
     int N=7;
-      d_int ptr[]={9,8,8,8,
-                    2,1,6,7,
-                    1,1,20,2,
-                    9,0,10,9,
-                    3,1,2,5,
-                    12,1,1,2,
-                    3,4,1,2};
+      d_int ptr[]={9,8,10,9,
+                    1,1,3,2,
+                    5,5,6,6,
+                    9,10,10,11,
+                    3,1,4,3,
+                    8,6,9,9,
+                    3,4,5,6};
     vector <Rectangulo> r =  makeRectArray(ptr,N*4);
     for (int i = 0; i<N; i++){
 
@@ -43,10 +43,35 @@ int main(){
 
     FILE *arch=fopen("xRTree","rb");
     int blk_size=(sizeof(int));
-    int arr[50];
-    fread(arr,sizeof(int),50,arch);
+    int rect[5*N];
+    int nll[1];
+    fread(nll,sizeof(int),1,arch); //se lee el nulo
+    fread(rect,sizeof(int),5*N,arch); //se leen rectángulos
+    int n1[5*N];
+    fread(n1,sizeof(int),5*N,arch); //se leen los nodos padres
+    int n2[5*N];
+    fread(n2,sizeof(int),N*5,arch); //se leen los nodos abuelos
     fclose(arch);
-    for (int x: arr){
+    //impresión de la información del binario
+    cout<<"Hojas: ";
+    int ct = 0;
+    for (int x: rect){
+        if (ct == m){
+            cout<<"|| ";
+            ct = 0;
+        }
+        cout<<x<<" ";
+        ct++;
+    }
+    cout<<endl;
+    cout<<"Padres: ";
+   
+    for (int x: n1){
+        cout<<x<<" "; 
+    }
+    cout<<endl;
+    cout<<"Abuelos: ";
+    for (int x: n2){
         cout<<x<<" ";
     }
     cout<<endl;
