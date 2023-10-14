@@ -13,7 +13,7 @@ uint32_t randomNum(int minimo = 0, int maximo = 500000){
 }
 
 int main(){
-    int m = 5;
+    int m = 2;
     //prueba de crear un arreglo de rectángulos en base a un arreglo de puntos
     int N=7;
       d_int ptr[]={9,8,10,9,
@@ -38,26 +38,32 @@ int main(){
     Rectangulo mbr = calcularMBR(r,0,N);
         cout<<"MBR: "<<mbr.p1<<','<<mbr.p2<<endl;
     //prueba de generación del binario
-    nX_RTree(r,2);
+    nX_RTree(r,m);
     //prueba de lectura del binario
 
     FILE *arch=fopen("xRTree","rb");
     int blk_size=(sizeof(int));
     int rect[5*N];
     int nll[1];
-    fread(nll,sizeof(int),1,arch); //se lee el nulo
+    fread(nll,sizeof(int),1,arch);    //se lee el nulo
     fread(rect,sizeof(int),5*N,arch); //se leen rectángulos
-    int n1[5*N];
-    fread(n1,sizeof(int),5*N,arch); //se leen los nodos padres
-    int n2[5*N];
-    fread(n2,sizeof(int),N*5,arch); //se leen los nodos abuelos
+
+    int size = N/m;                        // tamaño del siguiente sector de nodos
+    if (size%2 != 0) size++;
+    int n1[(4*size + size)*m];                 // tamaño (rectangulo +puntero)*capacidad nodo * cantidad mbrs
+    fread(n1,sizeof(int),5*size*m,arch);   //se leen los nodos padres
+
+    size = size/m;
+    if (size%2 != 0) size++;
+    int n2[5*m*size];
+    fread(n2,sizeof(int),5*m*size,arch);   //se leen los nodos abuelos
     fclose(arch);
     //impresión de la información del binario
-    cout<<"Hojas: ";
+    cout<<"Hojas: "<<'\n';
     int ct = 0;
     for (int x: rect){
-        if (ct == m){
-            cout<<"|| ";
+        if (ct == 5){
+            cout<<'\n';
             ct = 0;
         }
         cout<<x<<" ";
@@ -65,14 +71,25 @@ int main(){
     }
     cout<<endl;
     cout<<"Padres: ";
-   
+    ct = m*5;
     for (int x: n1){
+        if (ct == m*5){
+            cout<<'\n';
+            ct = 0;
+        }
         cout<<x<<" "; 
+        ct++;
     }
+    ct = m*5;
     cout<<endl;
     cout<<"Abuelos: ";
     for (int x: n2){
+        if (ct == m*5){
+            cout<<'\n';
+            ct = 0;
+        }
         cout<<x<<" ";
+        ct++;
     }
     cout<<endl;
     return 0;
