@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <iterator>
 #include <set>
@@ -42,6 +43,16 @@ Rectangulo calcularMBR(vector<Rectangulo>& listaRectangulos,int start, int end) 
 
     // retornamos el MBR calculado como un nuevo rectángulo
     return Rectangulo(Punto(minX, minY), Punto(maxX, maxY));
+}
+/*Función auxiliar para grabar un vector en memoria */
+void grabarVector(vector<int> vect){
+    int size = sizeof(vect)/sizeof(vect[0]);
+    FILE *arch;
+    arch = fopen("xRTree.bin","wt");
+    for (int data : vect){
+        fwrite(&data,sizeof(int),1,arch);
+    }
+    fclose(arch);
 }
 
 /*
@@ -152,5 +163,5 @@ void nX_RTree(vector <Rectangulo> &r_vect, int m){
         }
     }
     // Se escribe el RTree en un binario
-    
+    grabarVector(arr);
 }
