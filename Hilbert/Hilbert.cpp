@@ -10,7 +10,7 @@
 #include <thread>
 #include <chrono>
 #include <cmath>
-#include "../NodoRTree.cpp"
+#include "../../NodoRTree.cpp"
 
 // ===================== version 2 ================================
 

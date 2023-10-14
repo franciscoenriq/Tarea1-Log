@@ -1,6 +1,8 @@
 #include <iostream>
 #include "NodoRTree.cpp"
 
+using namespace std;
+
 bool intersectan(Rectangulo rect1, Rectangulo rect2)
 {
     // vemos los casos donde no se intersectan
@@ -16,31 +18,29 @@ bool intersectan(Rectangulo rect1, Rectangulo rect2)
     return true;
 }
 
-Rectangulo calcularMBR(const std::vector<Rectangulo> &listaRectangulos)
-{
-
-    if (listaRectangulos.empty())
-    {
+/*Función auxiliar que encuentra un MBR en el rango [start,end] de una lista de rectangulos*/
+Rectangulo calcularMBR(vector<Rectangulo>& listaRectangulos,int start, int end) {
+    int lsize = listaRectangulos.size();
+    if (listaRectangulos.empty()) {
         return Rectangulo{{0, 0}, {0, 0}};
     }
 
-    if (listaRectangulos.size() == 1)
-    {
+    if (lsize ==1){
         return listaRectangulos[0];
     }
 
-    int minX = listaRectangulos[0].inf_izq.x;
-    int maxX = listaRectangulos[0].sup_der.x;
-    int minY = listaRectangulos[0].inf_izq.y;
-    int maxY = listaRectangulos[0].sup_der.y;
-
-    for (size_t i = 1; i < listaRectangulos.size(); i++)
-    {
-        const Rectangulo &rect = listaRectangulos[i];
-        minX = std::min(minX, rect.inf_izq.x);
-        maxX = std::max(maxX, rect.sup_der.x);
-        minY = std::min(minY, rect.inf_izq.y);
-        maxY = std::max(maxY, rect.sup_der.y);
+    uint32_t minX = listaRectangulos[start].p1.x;
+    uint32_t maxX = listaRectangulos[start].p2.x;
+    uint32_t minY = listaRectangulos[start].p1.y;
+    uint32_t maxY = listaRectangulos[start].p2.y;
+    if (lsize < end)
+        end = lsize;
+    for (size_t i = start; i < end; i++) {
+        const Rectangulo& rect = listaRectangulos[i];
+        minX = min(minX, (uint32_t)rect.p1.x);
+        maxX = max(maxX, (uint32_t)rect.p2.x);
+        minY = min(minY, (uint32_t)rect.p1.y);
+        maxY = max(maxY, (uint32_t)rect.p2.y);
     }
 
     // retornamos el MBR calculado como un nuevo rectángulo
