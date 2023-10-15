@@ -12,6 +12,7 @@
 #include "bits/stdc++.h"
 #include "../NodoRTree.cpp"
 #include "valarray"
+//para ahorrar un par de escrituras de teclado
 #define p1 inf_izq
 #define p2 sup_der
 #define d_int int
@@ -86,18 +87,18 @@ Rectangulo calcularMBR(vector<Rectangulo>& listaRectangulos,int start, int end) 
         return listaRectangulos[0];
     }
 
-    uint32_t minX = listaRectangulos[start].p1.x;
-    uint32_t maxX = listaRectangulos[start].p2.x;
-    uint32_t minY = listaRectangulos[start].p1.y;
-    uint32_t maxY = listaRectangulos[start].p2.y;
+    d_int minX = listaRectangulos[start].p1.x;
+    d_int maxX = listaRectangulos[start].p2.x;
+    d_int minY = listaRectangulos[start].p1.y;
+    d_int maxY = listaRectangulos[start].p2.y;
     if (lsize < end)
         end = lsize;
-    for (size_t i = start; i < end; i++) {
+    for (size_t i = start+1; i < end; i++) {
         const Rectangulo& rect = listaRectangulos[i];
-        minX = min(minX, (uint32_t)rect.p1.x);
-        maxX = max(maxX, (uint32_t)rect.p2.x);
-        minY = min(minY, (uint32_t)rect.p1.y);
-        maxY = max(maxY, (uint32_t)rect.p2.y);
+        minX = min(minX, (d_int)rect.p1.x);
+        maxX = max(maxX, (d_int)rect.p2.x);
+        minY = min(minY, (d_int)rect.p1.y);
+        maxY = max(maxY, (d_int)rect.p2.y);
     }
 
     // retornamos el MBR calculado como un nuevo rectángulo
@@ -122,14 +123,11 @@ La estructura final se disponde de la siguiente forma en memoria:
 |------------------|----|----|----|----|
 |__________________|____ ___________h__|....
                     
----cada rectángulo contiene 4 enteros: 4*R enteros
+---cada rectángulo contiene 4 enteros + 0: 5*R enteros
 ---cada nodo contiene 4k + k enteros; 
             4k para rectangulos  MBR
             k  para punteros (offset) a hijos.
 --- se tienen R/m nodos en total
-
---- el offset unitario que más sentido tiene usar es sizeof(int) por simplicidad
-
 */
 void nX_RTree(vector <Rectangulo> &r_vect, int m){
     //vector que contendrá los datos a insertar en la interación actual
@@ -151,14 +149,14 @@ void nX_RTree(vector <Rectangulo> &r_vect, int m){
     //se calcula la cantidad de mbrs a calcular
     //Notar que esto también corresponde a cuantos nodos se crearán en esta iteración
     int n_mbr = R_totales/m;
-    if (R_totales%m != 0) n_mbr++;     //si existe algun resto, se debe calcular un mbr más
+    if (R_totales%2 != 0 && R_totales != 1) n_mbr++;     //si existe algun resto, se debe calcular un mbr más
     cout<<"Starting..."<<"MBRs to calculate: "<< n_mbr<<endl;
 
     // se calculan los mbrs
     vector <Rectangulo> mbrs(n_mbr,Rectangulo(Punto(0,0),Punto(0,0)));
     // Se recorre el vector de rectángulos para generar los MBR
     for (int rect = 0; rect < n_mbr; rect++){  
-        mbrs[rect] = calcularMBR(r_vect,rect*m,rect*(m+1)); 
+        mbrs[rect] = calcularMBR(r_vect,rect*m,(rect+1)*m); 
     }
        //DEBUG
         for (Rectangulo x :mbrs){
@@ -169,69 +167,78 @@ void nX_RTree(vector <Rectangulo> &r_vect, int m){
     int offset = 1;
     //Se van insertando los nodos padre de a m datos
     for (int padres = 0; padres < n_mbr; padres++){
-        int ds = m*padres;              //desplazamiento para los mbrs  
-        if (ds > n_mbr) ds = n_mbr;     // si ds > n_mbr pasan cosas feas :s
+        int ds = m*padres;              //desplazamiento de los padres por los mbrs  
         for (int k = 0; k<m; k++){      //primero los "punteros" a hijos
-            arr.push_back(offset);
+            if (k+ds>=R_totales) arr.push_back(0);//Hay menos de k hijos reales para el nodo
+            else arr.push_back(offset);
             offset +=5;                 //se avanza a la primera posición de la siguiente hoja
         }
-        for (int k = 0; k<m; k++){      //luego las claves (rectángulos mbr)
-            arr.push_back(mbrs[k+ds].p1.x);
-            arr.push_back(mbrs[k+ds].p1.y);
-            arr.push_back(mbrs[k+ds].p2.x);
-            arr.push_back(mbrs[k+ds].p2.y);
-            
+        for (int k = 0; k<m; k++){      //luego las claves (rectángulos de hijos)
+            if (k+ds >= R_totales){       //Hay menos de k mbr reales para el nodo
+                arr.push_back(0);
+                arr.push_back(0);
+                arr.push_back(0);
+                arr.push_back(0);
+            } 
+            else {
+                arr.push_back(r_vect[k+ds].p1.x);
+                arr.push_back(r_vect[k+ds].p1.y);
+                arr.push_back(r_vect[k+ds].p2.x);
+                arr.push_back(r_vect[k+ds].p2.y);
+            }
         }
     }
     // si la cantidad de mbrs fué mayor a la cantidad de datos guardables en un nodo,
     // se repite una variación del algoritmo anterior.
     if (n_mbr > m){
         int data = n_mbr/m;
-        cout<<"MBRs to calculate: "<< data<<endl;
+        if (data%2 != 0 && data != 1) n_mbr++;
+        cout<<"MBRs to calculate: "<< data <<endl;
         /* se crean vectores para contener los mbrs anteriores y a los actuales. 
-          Notar que el tamañano efectivamente utilizado nunca puede ser mayor a n_mbr original */
-        vector <Rectangulo> ans_mbrs = mbrs;
+          Notar que el tamañano efectivamentes utilizado nunca puede ser mayor a n_mbr original */
         vector <Rectangulo> new_mbrs(data,Rectangulo(Punto(0,0),Punto(0,0)));
 
-
         while (data - 1 > 0){
+            int counter = 0; //cuantas veces se ha realizado este ciclo
             /*se (re)calcula la cantidad de mbrs a calcular. Notar que esto también corresponde a 
              cuantos nodos se crearán en esta iteración, y hasta que nivel se usarán los vectores
              anteriores */
-            int nmbr = data;
-            // Se recorre el vector de rectángulos para generar los MBR
-            for (int rect = 0; rect < nmbr; rect++){  
-                new_mbrs[rect] = calcularMBR(ans_mbrs,rect*m,rect*(m+1)); 
+            // Se recorre el vector de mbrs para generar otros  MBR
+            for (int rect = 0; rect < data; rect++){  
+                new_mbrs[rect] = calcularMBR(mbrs,rect*m,(rect+1)*m); 
             }
             for (Rectangulo x : new_mbrs){
                  cout<<"MBR*: "<<x.p1.x<<','<<x.p1.y<<';'<<x.p2.x<<','<<x.p2.y<<endl;
              }
             //Se van insertando datos a los  nodos ascendentes de a m datos (hasta llenar los)
-            for (int padres = 0; padres < nmbr; padres++){
-                int K = m;                       //cantidad de datos a insertar 
-                for (int k = 0; k<K; k++){       //primero los "punteros" a hijos
-                    if (k>=nmbr) arr.push_back(0);//Hay menos de k hijos reales para el nodo
+            for (int padres = 0; padres < data; padres++){
+                int ds = m*padres;              //desplazamiento para los mbrs
+                for (int k = 0; k < m; k++){       //primero los "punteros" a hijos
+                    if (k+ds > data) arr.push_back(0);//Hay menos de k hijos reales para el nodo
                     else arr.push_back(offset);
-                    offset +=5*m;               //se avanza a la primera posición del siguiente nodo
+                    offset +=5*m;
                 }
-                for (int k = 0; k<K; k++){      //luego las claves (rectángulos mbr)
-                    if (k>=nmbr){                //Hay menos de k mbr reales para el nodo
+                                    //se avanza a la primera posición del siguiente nodo
+                for (int k = 0; k<m; k++){      //luego las claves (rectángulos mbr)
+                    if (k+ds > data){                //Hay menos de k mbr reales para el nodo
                         arr.push_back(0);
                         arr.push_back(0);
                         arr.push_back(0);
                         arr.push_back(0);
                     } 
                     else {
-                        arr.push_back(new_mbrs[k*padres].p1.x);
-                        arr.push_back(new_mbrs[k*padres].p1.y);
-                        arr.push_back(new_mbrs[k*padres].p2.x);
-                        arr.push_back(new_mbrs[k*padres].p2.y);
+                        arr.push_back(mbrs[k*padres+ds].p1.x);
+                        arr.push_back(mbrs[k*padres+ds].p1.y);
+                        arr.push_back(mbrs[k*padres+ds].p2.x);
+                        arr.push_back(mbrs[k*padres+ds].p2.y);
                     }
                 } 
             }
-            // ahora necesita que  new_mbr debe ser ans_mbr
-            for (int i = 0; i<nmbr; i++){
-                ans_mbrs[i]=new_mbrs[i];
+            // ahora necesita que mbrs sea new_mbrs
+            int i = 0;
+            for (Rectangulo x : new_mbrs){
+                mbrs[i]=x;
+                i++;
             }
             // Se actualiza el valor de data
             data = data/m;
