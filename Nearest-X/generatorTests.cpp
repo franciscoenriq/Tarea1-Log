@@ -43,17 +43,17 @@ int main(){
 
     FILE *arch=fopen("xRTree","rb");
     int blk_size=(sizeof(int));
-    int rect[5*N];
+    //int rect[5*N];
     int nll[1];
     fread(nll,sizeof(int),1,arch);          //se lee el nulo
-    fread(rect,sizeof(int),5*N,arch);      //se leen rectángulos
+    //fread(rect,sizeof(int),5*N,arch);      //se leen rectángulos
 
     //Notar que de esta parte en adelante, es posible recorrer o rescatar
     //los valores del binario usando un ciclo while e indicando offsets múltiplos
     // de 5*m 
     int size = N/m;                        // tamaño del siguiente sector de nodos
     if (size%2 != 0 && size != 1) size++;
-    int n1[(4*size + size)*m];             // tamaño (rectangulo +puntero)*capacidad nodo * cantidad mbrs
+    int n1[5*m*size];             // tamaño (rectangulo +puntero)*capacidad nodo * cantidad mbrs
     fread(n1,sizeof(int),5*size*m,arch);   //se leen los nodos padres
 
     size = size/m;
@@ -68,9 +68,9 @@ int main(){
     fclose(arch);                          //se cierra el archivo
 
     //impresión de la información del binario
-    cout<<"Arbol con m = "<< m <<endl;
-    cout<<"Hojas: "<<'\n';
     int ct = 0;
+    /*cout<<"Arbol con m = "<< m <<endl;
+    cout<<"Hojas: "<<'\n';
     for (int x: rect){
         if (ct == 5){   //es posible leer la hojas iterando de a 5 int
             cout<<'\n';
@@ -80,6 +80,9 @@ int main(){
         ct++;
     }
     cout<<endl;
+    */
+   for (int x : nll)
+    cout<<x<<endl;
     cout<<"Padres: ";
     ct = m*5;
     for (int x: n1){
