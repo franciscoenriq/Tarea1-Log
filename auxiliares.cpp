@@ -146,67 +146,68 @@ vector<int> vectorRTree(vector <Rectangulo> &r_vect, int m){
     offset = 1; //se retrocede el offset al primer nodo hijo
     // si la cantidad de mbrs fué mayor a la cantidad de datos guardables en un nodo,
     // se repite una variación del algoritmo anterior.
-    if (n_mbr > m){
-        int last = 0; //marcador que indica si es la última iteración
-        while (true){
-            for (int padres = 0; padres < n_mbr; padres++){
-                int ds = m*padres;                  //desplazamiento de los padres por los mbrs  
-                if (ds >=n_mbr)                      //si el desplazamiento es mayor al tamaño del vector de rectángulos
-                    ds=0;                           // no se usa
-                //inserción de punteros a hijos
-                for (int k = 0; k<m; k++){          
-                    if (k>=R_totales) 
-                        arr.push_back(0);        //Hay menos de k hijos reales para el nodo
-                    else 
-                        arr.push_back(offset);
-                    offset +=5*m;                 //se avanza a la primera posición de la siguiente hoja
-                }
-                //linserción de claves (rectángulos de hijos)
-                for (int k = 0; k < m; k++){            
-                    if (k+ds >= R_totales){           //Hay menos de k mbr reales para el nodo
-                        arr.push_back(0);
-                        arr.push_back(0);
-                        arr.push_back(0);
-                        arr.push_back(0);
-                    } 
-                    else { 
-                        arr.push_back(mbrs[k+ds].inf_izq.x);
-                        arr.push_back(mbrs[k+ds].inf_izq.y);
-                        arr.push_back(mbrs[k+ds].sup_der.x);
-                        arr.push_back(mbrs[k+ds].sup_der.y);
-                    }
-                 }
-            }
+      int last = 0; //marcador que indica si es la última iteración
+      int rects = n_mbr;
+      while (true){
+          int ds = 0;
+          for (int padres = 0; padres < rects; padres++){
+              int ds = m*padres;                  //desplazamiento de los padres por los mbrs                 
+              for (int k = 0; k<m; k++){          
+                  if (k +ds >=R_totales) 
+                      arr.push_back(0);        //Hay menos de k hijos reales para el nodo
+                  else 
+                      arr.push_back(offset);
+                  offset +=5*m;                 //se avanza a la primera posición de la siguiente hoja
+              }
+              //linserción de claves (rectángulos de hijos)
+              for (int k = 0; k < m; k++){            
+                  if (k+ds >= R_totales){           //Hay menos de k mbr reales para el nodo
+                      arr.push_back(0);
+                      arr.push_back(0);
+                      arr.push_back(0);
+                      arr.push_back(0);
+                  } 
+                  else { 
+                      arr.push_back(mbrs[k+ds].inf_izq.x);
+                      arr.push_back(mbrs[k+ds].inf_izq.y);
+                      arr.push_back(mbrs[k+ds].sup_der.x);
+                      arr.push_back(mbrs[k+ds].sup_der.y);
+                      rects--;
+                  }
+               }ds += m;
+          }
 
-            if (last)       //si la siguiente es la última iteración, se rompe el bucle
-                break;
-            //se re-calculan los MBR
-            int br = n_mbr;
-            n_mbr = n_mbr/m;
-            // Se guarda cuantos elemntos será necesario quitar del vector;
-            br = br-n_mbr;
-            // Se recorre el vector de mbrs para generar otros MBR
-            if (n_mbr>0){
-                cout<<"MBRs to calculate: "<< n_mbr<<endl;
-                for (int rect = 0; rect < n_mbr; rect++){  
-                    mbrs[rect] = calcularMBR(mbrs,rect*m,(rect+1)*m); 
-                }
-                // se quitan los espacios innecesarios de mbrs
-                for (int i = 0; i<br; i++){
-                    mbrs.pop_back();
-                }
-                //DEBUG
-                for (Rectangulo x :mbrs){
-                    cout<<"MBR*: "<<x.inf_izq.x<<','<<x.inf_izq.y<<';'<<x.sup_der.x<<','<<x.sup_der.y<<endl;
-                }
-            }
-            if (n_mbr < m) 
-                last = 1;   //se marca como ultima la siguiente iteración
-            n_mbr = n_mbr/m;
-            if (n_mbr != 1 && n_mbr%2 != 0) n_mbr++;
-            
-        }
-    }
+          if (last)       //si la siguiente es la última iteración, se rompe el bucle
+              break;
+          //se re-calculan los MBR
+          int br = n_mbr;
+          n_mbr = n_mbr/m;
+          rects = n_mbr;
+          // Se guarda cuantos elemntos será necesario quitar del vector;
+          if (br != 1 && br%m != 0) n_mbr++;
+          // Se recorre el vector de mbrs para generar otros MBR
+          if (n_mbr>0){
+              cout<<"MBRs to calculate: "<< n_mbr<<endl;
+              vector <Rectangulo>  newmbr(n_mbr,Rectangulo(Punto(0,0),Punto(0,0)));
+              for (int rect = 0; rect < n_mbr; rect++){  
+                  newmbr[rect] = calcularMBR(mbrs,rect*m,(rect+1)*m); 
+              }
+              // se quitan los espacios innecesarios de mbrs
+              mbrs = vector <Rectangulo> (n_mbr,Rectangulo(Punto(0,0),Punto(0,0)));
+              for (int i = 0; i<n_mbr; i++){
+                  mbrs[i]= newmbr[i];
+              }
+              //DEBUG
+              for (Rectangulo x :mbrs){
+                  cout<<"MBR*: "<<x.inf_izq.x<<','<<x.inf_izq.y<<';'<<x.sup_der.x<<','<<x.sup_der.y<<endl;
+              }
+          }
+          if (n_mbr < m) 
+              last = 1;   //se marca como ultima la siguiente iteración
+          n_mbr = n_mbr/m;
+          
+      }
+    
     // Se retorna el vector creado
     return arr;
 }
