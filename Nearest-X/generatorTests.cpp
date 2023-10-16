@@ -13,12 +13,12 @@ int main()
     // prueba de crear un arreglo de rectángulos en base a un arreglo de puntos
     int N = 7;
     int ptr[] = {9, 8, 10, 9,
-                   1, 1, 3, 2,
-                   5, 5, 6, 6,
-                   9, 10, 11, 11,
-                   3, 1, 4, 3,
-                   8, 6, 9, 9,
-                   3, 4, 5, 6};
+                1, 1, 3, 2,
+                5, 5, 6, 6,
+                9, 10, 11, 11,
+                3, 1, 4, 3,
+                8, 6, 9, 9,
+                3, 4, 5, 6};
     vector<Rectangulo> r = makeRectArray(ptr, N * 4);
     for (int i = 0; i < N; i++)
     {

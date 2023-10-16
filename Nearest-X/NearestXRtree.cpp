@@ -95,5 +95,6 @@ void nX_RTree(vector <Rectangulo> &r_vect, int m){
     // se obtiene un vector que representa al rTree
     vector<int> arr = vectorRTree(r_vect, m);
     // Se escribe el RTree en un binario
-    grabarVector(arr);
+    const char* fileName = "xRTree.bin";
+    grabarVector(arr, fileName);
 }

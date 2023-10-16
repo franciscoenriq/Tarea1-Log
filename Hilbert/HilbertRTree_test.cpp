@@ -53,5 +53,8 @@ int main()
     }
     cout << endl;
 
+    const char* fileName = "HilbertRTree.bin";
+    grabarVector(rTree, fileName);
+
     return 0;
 }

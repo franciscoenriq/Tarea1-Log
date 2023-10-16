@@ -115,4 +115,6 @@ void HilbertRTree(vector<Rectangulo> &lRect, int m)
     vector<int> vArbol = vectorRTree(lRect, m);
 
     // finalmente, escribir el vector en un archivo binario
+      const char* fileName = "HilbertRTree.bin";
+    grabarVector(vArbol, fileName);
 }
