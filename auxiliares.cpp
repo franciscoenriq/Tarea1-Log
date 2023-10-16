@@ -61,14 +61,18 @@ Rectangulo calcularMBR(vector<Rectangulo> &listaRectangulos, int start, int end)
 
 
 /*Función auxiliar para grabar un vector en memoria */
-void grabarVector(vector<int> vect){
-    //int size = sizeof(vect)/sizeof(vect[0]);
-    FILE *arch;
-    arch = fopen("xRTree","wt");
-    for (int data : vect){
-        fwrite(&data,sizeof(int),1,arch);
+void grabarVector(vector<int> vect, const char* fileName){
+     FILE* arch;
+    arch = fopen(fileName, "wt");
+    if (arch) {
+        for (int data : vect) {
+            fwrite(&data, sizeof(int), 1, arch);
+        }
+        fclose(arch);
+        std::cout << "Archivo '" << fileName << "' creado y datos escritos con éxito." << std::endl;
+    } else {
+        std::cerr << "No se pudo abrir el archivo '" << fileName << "'." << std::endl;
     }
-    fclose(arch);
 }
 
 /*
