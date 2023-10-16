@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int tamanho_pagina = 4096; // bytes
+
 
 int main()
 {
@@ -52,6 +52,9 @@ int main()
         cout << val << " ";
     }
     cout << endl;
+
+    const char* fileName = "HilbertRTree.bin";
+    grabarVector(rTree, fileName);
 
     return 0;
 }

@@ -36,3 +36,9 @@ struct Rectangulo
 
     Rectangulo(Punto inf_izq, Punto sup_der) : inf_izq(inf_izq), sup_der(sup_der), centro(calcularPuntoMedio(inf_izq, sup_der)) {}
 };
+
+// Operador de salida personalizado para la estructura Rectangulo
+std::ostream& operator<<(std::ostream& os, const Rectangulo& rect) {
+    os << "Rectangulo(" << rect.inf_izq << ", " << rect.sup_der << ")";
+    return os;
+}
