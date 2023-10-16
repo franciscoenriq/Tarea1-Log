@@ -104,7 +104,7 @@ vector<int> vectorRTree(vector <Rectangulo> &r_vect, int m){
     //se calcula la cantidad de mbrs a calcular
     //Notar que esto también corresponde a cuantos nodos se crearán en esta iteración
     int n_mbr = R_totales/m;
-    if (R_totales%2 != 0 && R_totales != 1) n_mbr++;     //si existe algun resto, se debe calcular un mbr más
+    if (R_totales%m != 0 && R_totales != 1) n_mbr++;     //si existe algun resto, se debe calcular un mbr más
     cout<<"Starting..."<<"MBRs to calculate: "<< n_mbr<<endl;
 
     // se calculan los mbrs
