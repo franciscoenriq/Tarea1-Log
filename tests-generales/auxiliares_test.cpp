@@ -1,20 +1,27 @@
-#include "auxiliares.cpp"
+#include "../auxiliares.cpp"
 
-int main() {
+int main()
+{
     // Pruebas para la función intersectan
     Rectangulo rect1(Punto(0, 0), Punto(4, 4));
     Rectangulo rect2(Punto(2, 2), Punto(6, 6));
     Rectangulo rect3(Punto(5, 5), Punto(8, 8));
 
-    if (intersectan(rect1, rect2)) {
+    if (intersectan(rect1, rect2))
+    {
         std::cout << "rect1 y rect2 se intersectan." << std::endl;
-    } else {
+    }
+    else
+    {
         std::cout << "rect1 y rect2 no se intersectan." << std::endl;
     }
 
-    if (intersectan(rect1, rect3)) {
+    if (intersectan(rect1, rect3))
+    {
         std::cout << "rect1 y rect3 se intersectan." << std::endl;
-    } else {
+    }
+    else
+    {
         std::cout << "rect1 y rect3 no se intersectan." << std::endl;
     }
 

@@ -1,4 +1,4 @@
-#include "NodoRTree.cpp"
+#include "../NodoRTree.cpp"
 
 int main()
 {
