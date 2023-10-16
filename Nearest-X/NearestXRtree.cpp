@@ -6,7 +6,7 @@
 #include <string>
 #include <cmath>
 #include <malloc.h>
-#include <stdio.h> 
+#include <stdio.h>
 #include <cstdint>
 #include <cstdlib>
 #include "bits/stdc++.h"
