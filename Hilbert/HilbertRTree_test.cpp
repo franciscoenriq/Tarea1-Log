@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int tamanho_pagina = 4096; // bytes
+
 
 int main()
 {
