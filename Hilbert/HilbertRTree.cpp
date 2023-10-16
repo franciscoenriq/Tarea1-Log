@@ -1,45 +1,118 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
-#include <iostream>
 #include <thread>
 #include <chrono>
 #include <cmath>
-#include "Hilbert.cpp"
-#include "../NodoRTree.cpp"
+#include <algorithm>
+#include <limits>
+#include "../auxiliares.cpp"
 
-NodoRTree HilbertRTree(std::vector<Rectangulo> &listaRectangulos, int m)
+using namespace std;
+
+// Código desde wikipedia para pasar de un punto x,y a d
+
+// Declaración anticipada de la función rot
+void rot(int n, int &x, int &y, int rx, int ry);
+
+// Convierte (x, y) a d
+int xy2d(int n, int x, int y)
+{
+    int rx, ry, s, d = 0;
+    for (s = n / 2; s > 0; s /= 2)
+    {
+        rx = (x & s) > 0;
+        ry = (y & s) > 0;
+        d += s * s * ((3 * rx) ^ ry);
+        rot(s, x, y, rx, ry);
+    }
+    return d;
+}
+
+// Convierte d a (x, y)
+void d2xy(int n, int d, int &x, int &y)
+{
+    int rx, ry, s, t = d;
+    x = y = 0;
+    for (s = 1; s < n; s *= 2)
+    {
+        rx = 1 & (t / 2);
+        ry = 1 & (t ^ rx);
+        rot(s, x, y, rx, ry);
+        x += s * rx;
+        y += s * ry;
+        t /= 4;
+    }
+}
+
+// Rotar/voltear un cuadrante apropiadamente
+void rot(int n, int &x, int &y, int rx, int ry)
+{
+    int t;
+    if (ry == 0)
+    {
+        if (rx == 1)
+        {
+            x = n - 1 - x;
+            y = n - 1 - y;
+        }
+        t = x;
+        x = y;
+        y = t;
+    }
+}
+
+bool compararPorD(Rectangulo a, Rectangulo b, int n)
+{
+    const Punto centroA = a.centro;
+    const Punto centroB = b.centro;
+    int valorA = xy2d(n, centroA.x, centroA.y);
+    int valorB = xy2d(n, centroB.x, centroB.y);
+
+    // Imprimir los puntos
+    cout << "Punto A: " << centroA << endl;
+    cout << "Punto B: " << centroB << endl;
+
+    // Imprimir el valor de valorA y valorB
+    cout << "Valor de valorA: " << valorA << endl;
+    cout << "Valor de valorB: " << valorB << endl;
+
+    return valorA < valorB;
+}
+
+void ordenarHilbert(vector<Rectangulo> &lRect)
 {
 
-    // 1. extraer centros,indice
-    std::vector<std::tuple<Punto, int>> centros;
+    // calcular n necesario
+    int minX = numeric_limits<int>::max();
+    int minY = numeric_limits<int>::max();
+    int maxX = numeric_limits<int>::min();
+    int maxY = numeric_limits<int>::min();
 
-    int cantidadRectangulos = sizeof(listaRectangulos) / sizeof(listaRectangulos[0]);
-
-    // iteramos sobre los rectangulos
-    for (int i = 0; i < cantidadRectangulos; i++)
+    for (const auto &rect : lRect)
     {
-        // Acceder al elemento en la posición i
-        Rectangulo rect = listaRectangulos[i];
-        const std::tuple<Punto, int> tupla(rect.centro, i);
-        centros.push_back(tupla);
+        minX = min(minX, rect.centro.x);
+        minY = min(minY, rect.centro.y);
+        maxX = max(maxX, rect.centro.x);
+        maxY = max(maxY, rect.centro.y);
     };
 
-    // 2. ordenar los centros segun la curva de hilbert
-    // calculamos el límite del espacio
+    int ancho_espacio = maxX - minX;
+    int alto_espacio = maxY - minY;
+    int nivel = log2(max(ancho_espacio, alto_espacio));
+    int n = pow(2, nivel);
 
-    ordenarHilbert(centros);
+    sort(lRect.begin(), lRect.end(), [n](Rectangulo a, Rectangulo b)
+         { return compararPorD(a, b, n); }); // ordenamos ds según d
+}
 
-    // 3. insertar en nodos de tamaño M y crear el árbol
-    int contador = 0;
+void HilbertRTree(vector<Rectangulo> &lRect, int m)
+{
+    // primero, ordenar los rectangulos segun la curva
+    ordenarHilbert(lRect);
 
-    // iteramos sobre los rectangulos
+    // segundo, pasar la lista a un vector que representa al RTree
+    vector<int> vArbol = vectorRTree(lRect, m);
 
-    for (int i = 0; i < cantidadRectangulos; i++)
-    {
-        // Acceder al elemento en la posición i
-        Rectangulo rect = listaRectangulos[i];
-        const std::tuple<Punto, int> tupla(rect.centro, i);
-        centros.push_back(tupla);
-    };
+    // finalmente, escribir el vector en un archivo binario
 }
