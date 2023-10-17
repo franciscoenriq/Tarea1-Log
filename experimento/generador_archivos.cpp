@@ -18,65 +18,48 @@ bool generarR = 1;
 
 // m es los rectangulos que caben en un nodo
 // cada rectangulo usa 5 enteros
-int M = PAGE_SIZE / (sizeof(int) * 5);
+ull M = PAGE_SIZE / (sizeof(ull) * 5);
 
-int calc_max_side_length(Rectangulo rect)
+ull calc_max_side_length(Rectangulo rect)
 {
     return max(rect.sup_der.x - rect.inf_izq.x, rect.sup_der.y - rect.inf_izq.y);
 }
 
-vector<Rectangulo> generateLRect(int max_side_length, int max_value, int total)
+vector<ull> generateLRect(ull max_side_length, ull max_value, ull total)
 {
-    vector<Rectangulo> result;
-    for (int i = 0; i < total; i++)
+    vector<ull> result;
+    for (ull i = 0; i < total; i++)
     {
-        Punto inf_izq = Punto(randomNum(0, max_value), randomNum(0, max_value));
-        Punto sup_der = Punto(randomNum(inf_izq.x, max_value), randomNum(inf_izq.y, max_value));
-        while (inf_izq.x > sup_der.x || inf_izq.y > sup_der.y || calc_max_side_length(Rectangulo(inf_izq, sup_der)) > max_side_length)
-        {
-            sup_der = Punto(randomNum(0, max_value), randomNum(0, max_value));
-        }
+        std::cout << i << std::endl;
+        ull inf_izq_x = randomNum(0, max_value);
+        ull inf_izq_y = randomNum(0, max_value);
+        ull sup_der_x = randomNum(inf_izq_x, inf_izq_x + max_side_length);
+        ull sup_der_y = randomNum(inf_izq_y, inf_izq_y + max_side_length);
 
-        result.push_back(Rectangulo(inf_izq, sup_der));
-        cout << Rectangulo(inf_izq, sup_der) << " " << endl;
+        result.push_back(inf_izq_x);
+        result.push_back(inf_izq_y);
+        result.push_back(sup_der_x);
+        result.push_back(sup_der_y);
+
+        cout << Rectangulo(Punto(inf_izq_x, inf_izq_y), Punto(sup_der_x, sup_der_y)) << " " << endl;
     }
-
 
     return result;
 }
 
-vector<int> vRectAvInt(vector<Rectangulo> lista, int cantidadRectangulos, int n)
-{
-
-    vector<int> resultado;
-    resultado.push_back(n);
-    resultado.push_back(cantidadRectangulos);
-    for (Rectangulo rect : lista)
-    {
-        resultado.push_back(rect.inf_izq.x);
-        resultado.push_back(rect.inf_izq.y);
-        resultado.push_back(rect.sup_der.x);
-        resultado.push_back(rect.sup_der.y);
-    }
-    return resultado;
-}
-
 int main()
 {
-    vector<int> n(16); // Inicializa un vector con 16 elementos
-    //vector<int> n(10);           // uno mas chico pa probar
-    iota(n.begin(), n.end(), 10); // Llena el vector con valores desde 10 hasta 25
-
-
+    vector<ull> n = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}; // Inicializa un vector con 16 elementos
+    //vector<ull> n = {25};
     // Vamos a generar un rectangulos iniciales y consultas por cada n
     // generamos los Q y R por separado
     if (generarQ)
     {
-        for (int N : n)
+        for (ull N : n)
         {
             std::cout << N << std::endl;
             // preparamos nombre de archivo a escribir
-            int numero = N;
+            ull numero = N;
             char *archivoQbase = "Q_for_n_2_";
 
             std::stringstream ss;
@@ -85,24 +68,21 @@ int main()
             char *archivoQ = const_cast<char *>(ss.str().c_str());
 
             // calculamos los vectores de rectangulos
-            vector<Rectangulo> Q = generateLRect(LADOQ, RANGO, 100);
-
-            // pasamos los vectores de rectangulos a vectores de enteros
-            vector<int> Qint = vRectAvInt(Q, 100, N);
+            vector<ull> Q = generateLRect(LADOQ, RANGO, 100);
 
             // grabamos los vectores en el archivo
-            grabarVector(Qint, archivoQ);
+            grabarVector(Q, archivoQ);
         }
     }
 
     if (generarR)
     {
-        for (int N : n)
+        for (ull N : n)
         {
             std::cout << N << std::endl;
 
             // preparamos nombre de archivo a escribir
-            int numero = N;
+            ull numero = N;
             char *archivoRbase = "R_for_n_2_";
 
             std::stringstream ss;
@@ -111,16 +91,25 @@ int main()
             char *archivoR = const_cast<char *>(ss.str().c_str());
 
             // calculamos los vectores de rectangulos
-            vector<Rectangulo> R = generateLRect(LADOR, RANGO, int(pow(2, N)));
-
-            // pasamos los vectores de rectangulos a vectores de enteros
-            vector<int> Rint = vRectAvInt(R, int(pow(2, N)), N);
+            vector<ull> R;
+            if (N == 25)
+            {
+                R = generateLRect(LADOR, RANGO, ull(pow(2, 23)));
+                for (int i = 1; i < 4; i++)
+                {
+                    vector<ull> R2 = generateLRect(LADOR, RANGO, ull(pow(2, 23)));
+                    R.insert(R.end(), R2.begin(), R2.end());
+                }
+            }
+            else
+            {
+                R = generateLRect(LADOR, RANGO, ull(pow(2, N)));
+            }
 
             // grabamos los vectores en el archivo
-            grabarVector(Rint, archivoR);
+            grabarVector(R, archivoR);
         }
     }
 
-    
     return 0;
 }

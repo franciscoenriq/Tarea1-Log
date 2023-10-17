@@ -4,5 +4,7 @@
 
 int main() {
    
-    leerBinFile("R_for_n_2_5");
+    //leerBinFile("R_for_n_2_5");
+
+    cout << sizeof(unsigned long long) << " ";
 }
