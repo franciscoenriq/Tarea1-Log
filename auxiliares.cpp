@@ -1,8 +1,41 @@
 #include <iostream>
 #include <cstdlib> //rand()
+    #include <iostream>
+#include <fstream>
+#include <vector>
 #include "NodoRTree.cpp"
 
 using namespace std;
+
+int leerBinFile(char *fileName){
+
+    std::ifstream archivo(fileName, std::ios::binary);
+
+    if (!archivo) {
+        std::cerr << "No se pudo abrir el archivo." << std::endl;
+        return 1;
+    }
+
+    std::vector<int> enteros;
+    int entero;
+
+    while (archivo.read(reinterpret_cast<char*>(&entero), sizeof(int))) {
+        enteros.push_back(entero);
+    }
+
+    archivo.close();
+
+    // Ahora tienes los enteros almacenados en el vector "enteros".
+    // Puedes realizar operaciones con ellos o mostrarlos.
+    std::cout << sizeof(enteros[0]) << " ";
+    for (int num : enteros) {
+        std::cout << num << " ";
+    }
+   // std::cout << sizeof(enteros[0]) << " "<< endl;
+    return 0;
+}
+
+
 
 int randomNum(int minimo = 0, int maximo = 500000)
 {

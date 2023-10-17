@@ -69,13 +69,13 @@ bool compararPorD(Rectangulo a, Rectangulo b, int n)
     int valorA = xy2d(n, centroA.x, centroA.y);
     int valorB = xy2d(n, centroB.x, centroB.y);
 
-    // Imprimir los puntos
-    cout << "Punto A: " << centroA << endl;
-    cout << "Punto B: " << centroB << endl;
+    // // Imprimir los puntos
+    // cout << "Punto A: " << centroA << endl;
+    // cout << "Punto B: " << centroB << endl;
 
-    // Imprimir el valor de valorA y valorB
-    cout << "Valor de valorA: " << valorA << endl;
-    cout << "Valor de valorB: " << valorB << endl;
+    // // Imprimir el valor de valorA y valorB
+    // cout << "Valor de valorA: " << valorA << endl;
+    // cout << "Valor de valorB: " << valorB << endl;
 
     return valorA < valorB;
 }
@@ -115,6 +115,6 @@ void HilbertRTree(vector<Rectangulo> &lRect, int m)
     vector<int> vArbol = vectorRTree(lRect, m);
 
     // finalmente, escribir el vector en un archivo binario
-      const char* fileName = "HilbertRTree.bin";
+    const char* fileName = "HilbertRTree.bin";
     grabarVector(vArbol, fileName);
 }
