@@ -8,17 +8,12 @@ using namespace std;
 #define yrange  100
 
 
-uint32_t randomNum(int minimo = 0, int maximo = 500000){
-    // Genera un número aleatorio entre minimo y (maximo - 1)
-    uint32_t numeroAleatorio = rand() % (maximo - minimo) + minimo;
-    return numeroAleatorio;
-}
 
 int main(){
     int m = 3;
     //prueba de crear un arreglo de rectángulos en base a un arreglo de puntos
     int N=11;
-      d_int ptr[]={9,8,10,9,
+      int ptr[]={9,8,10,9,
                     1,1,3,2,
                     5,5,6,6,
                     9,10,11,11,
@@ -29,7 +24,7 @@ int main(){
                     7,8,9,10,
                     10,10,13,13,
                     3,4,5,6};
-    vector <Rectangulo> r =  makeRectArray(ptr,N*4);
+    vector <Rectangulo> r =  makeRectArray(ptr, 4*N);
     for (int i = 0; i<N; i++){
 
         cout << "Rectangulo "<<i+1 << '\n'
@@ -44,9 +39,10 @@ int main(){
     Rectangulo mbr = calcularMBR(r,0,N);
         cout<<"MBR: "<<mbr.p1<<','<<mbr.p2<<endl;
     //prueba de generación del binario
-    nX_RTree(r,m);
-    //prueba de lectura del binario
+    vector<int> puntosRtree = nX_RTree(r,m);
+    grabarVector(puntosRtree,"xRTree");
 
+    //prueba de lectura del binario
     FILE *arch=fopen("xRTree","rb");
     int blk_size=(sizeof(int));
     //int rect[5*N];
@@ -87,11 +83,11 @@ int main(){
     }
     cout<<endl;
     */
-   for (int x : nll)
+   for (const auto x : nll)
     cout<<x<<endl;
     cout<<"Padres: ";
     ct = m*5;
-    for (int x: n1){
+    for (const auto x: n1){
         if (ct == m*5){ //es posible ver el resto de los nodos iterando de 5*m int
             cout<<'\n';
             ct = 0;
@@ -102,7 +98,7 @@ int main(){
     ct = m*5;
     cout<<endl;
     cout<<"Abuelos: ";
-    for (int x: n2){
+    for (const auto x: n2){
         if (ct == m*5){
             cout<<'\n';
             ct = 0;
@@ -113,7 +109,7 @@ int main(){
     ct = m*5;
     cout<<endl;
     cout<<"Raíz: ";
-    for (int x: n3){
+    for (const auto x: n3){
         if (ct == m*5){
             cout<<'\n';
             ct = 0;
@@ -128,7 +124,7 @@ int main(){
     int l = sizeof(*arch);
     fread(stream,sizeof(int),5*m*N+1,arch);   //se lee la raíz
     fclose(arch);
-    for (int x : stream){
+    for (const auto x : stream){
         cout<<x<<' ';
     }
     cout<<"tamaño archivo: "<<l<<endl;

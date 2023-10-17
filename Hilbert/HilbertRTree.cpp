@@ -108,11 +108,8 @@ void ordenarHilbert(vector<Rectangulo> &lRect)
 
 void HilbertRTree(vector<Rectangulo> &lRect, int m)
 {
-    // primero, ordenar los rectangulos segun la curva
-    ordenarHilbert(lRect);
-
-    // segundo, pasar la lista a un vector que representa al RTree
-    vector<int> vArbol = vectorRTree(lRect, m);
+    //pasar la lista a un vector que representa al RTree junto con el algoritmo de ordenamiento
+    vector<int> vArbol = vectorRTree(lRect, m,ordenarHilbert);
 
     // finalmente, escribir el vector en un archivo binario
       const char* fileName = "HilbertRTree.bin";

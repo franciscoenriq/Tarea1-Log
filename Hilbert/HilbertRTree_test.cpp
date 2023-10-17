@@ -7,7 +7,7 @@
 
 using namespace std;
 
-
+int m = 2;
 
 int main()
 {
@@ -45,11 +45,18 @@ int main()
     }
     cout << endl;
 
-    vector<int> rTree = vectorRTree(rectangulos1, 2);
+    vector<int> rTree = vectorRTree(copia, m, ordenarHilbert);
     cout << "vector RTree:" << endl;
+    cout << "Nodo:"<<endl;
+    int pos = 0;
     for (const auto &val : rTree)
-    {
+    {   if (pos == 2 || (pos-2)&(m*5)==0){
+            cout<<'\n'<<"Nodo: ";}
+        if (pos==1){
+            cout<<'\n'<<"puntero: ";
+        }
         cout << val << " ";
+        pos++;
     }
     cout << endl;
 
