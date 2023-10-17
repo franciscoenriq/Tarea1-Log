@@ -46,8 +46,8 @@ int main(){
     FILE *arch=fopen("xRTree","rb");
     int blk_size=(sizeof(int));
     //int rect[5*N];
-    int nll[1];
-    fread(nll,sizeof(int),1,arch);          //se lee el nulo
+    int nll[2];
+    fread(nll,sizeof(int),2,arch);          //se lee el nulo
     //fread(rect,sizeof(int),5*N,arch);      //se leen rectángulos
 
     //Notar que de esta parte en adelante, es posible recorrer o rescatar
