@@ -146,7 +146,7 @@ vector<ull> vectorRTree(vector <Rectangulo> &r_vect, ull m,
     // suponemos que los rectangulos vienen ordenados
 
     //vector que contendrá los datos a insertar en la iteración actual
-    vector <ull> arr(2,0);
+    vector <ull> arr(1,0);
     // se calcula la cantidad de rectángulos totales
     ull R_totales = r_vect.size();
     cout<<"Size of vector: "<< R_totales <<endl;
@@ -269,7 +269,7 @@ vector<ull> vectorRTree(vector <Rectangulo> &r_vect, ull m,
       }
     }
     // Se escribe el puntero al nodo raíz
-    arr[1] = offset;
+    arr[0] = offset;
     // Se retorna el vector creado
     return arr;
 }
