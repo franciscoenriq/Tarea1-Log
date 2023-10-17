@@ -2,13 +2,15 @@
 #include <vector>
 #include <cstdint>
 
+typedef unsigned long long ull;
+
 // Estructura para representar un punto en el plano 2D ==========================
 struct Punto
 {
-    int x;
-    int y;
+    ull x;
+    ull y;
 
-    Punto(int x, int y) : x(x), y(y) {}
+    Punto(ull x, ull y) : x(x), y(y) {}
 };
 
 // Función para calcular el centro de un Rectángulo ======================
@@ -36,3 +38,9 @@ struct Rectangulo
 
     Rectangulo(Punto inf_izq, Punto sup_der) : inf_izq(inf_izq), sup_der(sup_der), centro(calcularPuntoMedio(inf_izq, sup_der)) {}
 };
+
+// Operador de salida personalizado para la estructura Rectangulo
+std::ostream& operator<<(std::ostream& os, const Rectangulo& rect) {
+    os << "Rectangulo(" << rect.inf_izq << ", " << rect.sup_der << ")";
+    return os;
+}

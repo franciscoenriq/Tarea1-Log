@@ -7,8 +7,6 @@
 
 using namespace std;
 
-int tamanho_pagina = 4096; // bytes
-
 int main()
 {
     // Inicializa la semilla aleatoria para obtener números aleatorios diferentes en cada ejecución
@@ -45,13 +43,18 @@ int main()
     }
     cout << endl;
 
-    vector<int> rTree = vectorRTree(rectangulos1, 2);
+    vector<ull> rTree = vectorRTree(rectangulos1, 3);
     cout << "vector RTree:" << endl;
     for (const auto &val : rTree)
     {
         cout << val << " ";
     }
     cout << endl;
+
+    char *fileName = "HilbertRTree.bin";
+    grabarVector(rTree, fileName);
+    char *file2 = "HilbertRTree.bin";
+    leerBinFile(file2);
 
     return 0;
 }
