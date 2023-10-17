@@ -1,15 +1,49 @@
 #include <iterator>
 #include <functional>
 #include <cstdlib> //rand()
+    #include <iostream>
+#include <fstream>
+#include <vector>
 #include "NodoRTree.cpp"
 
 #define d_int int
 using namespace std;
+typedef unsigned long long ull;
 
-int randomNum(int minimo = 0, int maximo = 500000)
+ull leerBinFile(char *fileName){
+
+    std::ifstream archivo(fileName, std::ios::binary);
+
+    if (!archivo) {
+        std::cerr << "No se pudo abrir el archivo." << std::endl;
+        return 1;
+    }
+
+    std::vector<ull> enteros;
+    ull entero;
+
+    while (archivo.read(reinterpret_cast<char*>(&entero), sizeof(ull))) {
+        enteros.push_back(entero);
+    }
+
+    archivo.close();
+
+    // Ahora tienes los enteros almacenados en el vector "enteros".
+    // Puedes realizar operaciones con ellos o mostrarlos.
+    std::cout << sizeof(enteros[0]) << " ";
+    for (ull num : enteros) {
+        std::cout << num << " ";
+    }
+   // std::cout << sizeof(enteros[0]) << " "<< endl;
+    return 0;
+}
+
+
+
+ull randomNum(ull minimo = 0, ull maximo = 500000)
 {
     // Genera un número aleatorio entre minimo y (maximo - 1)
-    int numeroAleatorio = std::rand() % (maximo - minimo) + minimo;
+    ull numeroAleatorio = std::rand() % (maximo - minimo) + minimo;
     return numeroAleatorio;
 }
 
@@ -44,9 +78,9 @@ bool intersectan(Rectangulo rect1, Rectangulo rect2)
 }
 
 /*Función auxiliar que encuentra un MBR en el rango [start,end] de una lista de rectangulos*/
-Rectangulo calcularMBR(vector<Rectangulo> &listaRectangulos, int start, int end)
+Rectangulo calcularMBR(vector<Rectangulo> &listaRectangulos, ull start, ull end)
 {
-    int lsize = listaRectangulos.size();
+    ull lsize = listaRectangulos.size();
     if (listaRectangulos.empty())
     {
         return Rectangulo{{0, 0}, {0, 0}};
@@ -57,19 +91,19 @@ Rectangulo calcularMBR(vector<Rectangulo> &listaRectangulos, int start, int end)
         return listaRectangulos[0];
     }
 
-    int minX = listaRectangulos[start].inf_izq.x;
-    int maxX = listaRectangulos[start].sup_der.x;
-    int minY = listaRectangulos[start].inf_izq.y;
-    int maxY = listaRectangulos[start].sup_der.y;
+    ull minX = listaRectangulos[start].inf_izq.x;
+    ull maxX = listaRectangulos[start].sup_der.x;
+    ull minY = listaRectangulos[start].inf_izq.y;
+    ull maxY = listaRectangulos[start].sup_der.y;
     if (lsize < end)
         end = lsize;
-    for (int i = start; i < end; i++)
+    for (ull i = start; i < end; i++)
     {
         const Rectangulo &rect = listaRectangulos[i];
-        minX = min(minX, (int)rect.inf_izq.x);
-        maxX = max(maxX, (int)rect.sup_der.x);
-        minY = min(minY, (int)rect.inf_izq.y);
-        maxY = max(maxY, (int)rect.sup_der.y);
+        minX = min(minX, (ull)rect.inf_izq.x);
+        maxX = max(maxX, (ull)rect.sup_der.x);
+        minY = min(minY, (ull)rect.inf_izq.y);
+        maxY = max(maxY, (ull)rect.sup_der.y);
     }
 
     // retornamos el MBR calculado como un nuevo rectángulo
@@ -78,12 +112,13 @@ Rectangulo calcularMBR(vector<Rectangulo> &listaRectangulos, int start, int end)
 
 
 /*Función auxiliar para grabar un vector en memoria */
-void grabarVector(vector<int> vect, const char* fileName){
+void grabarVector(vector<ull> vect, char* fileName){
      FILE* arch;
     arch = fopen(fileName, "wt");
     if (arch) {
-        for (int data : vect) {
-            fwrite(&data, sizeof(int), 1, arch);
+        std::cout << "Iniciando escritura ..." << std::endl;
+        for (ull data : vect) {
+            fwrite(&data, sizeof(ull), 1, arch);
         }
         fclose(arch);
         std::cout << "Archivo '" << fileName << "' creado y datos escritos con éxito." << std::endl;
@@ -105,37 +140,37 @@ La estructura final dispone de los datos en nodos de la siguiente forma en memor
             k  para punteros (offset) a hijos.
 --- se tienen R/m nodos en total
 */
-vector<int> vectorRTree(vector <Rectangulo> &r_vect, int m, 
+vector<ull> vectorRTree(vector <Rectangulo> &r_vect, ull m, 
                         function <void (vector<Rectangulo> &)> funcOrden){
     // suponemos que los rectangulos vienen ordenados
 
-    //vector que contendrá los datos a insertar en la interación actual
-    vector <int> arr(1,0);
+    //vector que contendrá los datos a insertar en la iteración actual
+    vector <ull> arr(1,0);
     // se calcula la cantidad de rectángulos totales
-    int R_totales = r_vect.size();
+    ull R_totales = r_vect.size();
     cout<<"Size of vector: "<< R_totales <<endl;
     //Se ordenan los rectángulos del vector de entrada según el método
     funcOrden(r_vect);
     // PRIMERA ITERACIÓN
     //se calcula la cantidad de mbrs a calcular. Esto puede variar dependiendo del método
     //Notar que esto también corresponde a cuantos nodos se crearán en esta iteración
-    int n_mbr = R_totales/m;
+    ull n_mbr = R_totales/m;
     if (R_totales%m != 0 && R_totales != 1) n_mbr++;     //si existe algun resto, se debe calcular un mbr más
     //contador de inserciones
-    int data = 0;
+    ull data = 0;
     // algoritmo de construcción
-    int offset = 2 + m;   // se establece la posición del primer nodo hijo
+    ull offset = 2 + m;   // se establece la posición del primer nodo hijo
     //Se van insertando los nodos padre de a m datos
-    for (int padres = 0; padres < n_mbr; padres++){
-        int ds = m*padres;              //desplazamiento de los padres por los mbrs
-        for (int k = 0; k<m; k++){      //primero los "punteros" a hijos
-            if (k +ds>= R_totales)
+    for (ull padres = 0; padres < n_mbr; padres++){
+        ull ds = m*padres;              //desplazamiento de los padres por los mbrs
+        for (ull k = 0; k<m; k++){      //primero los "punteros" a hijos
+            if (k >= R_totales)
                 arr.push_back(0);//Hay menos de k hijos reales para el nodo
             else
                 arr.push_back(offset);
             offset +=5;                 //se avanza a la primera posición de la siguiente hoja
         }
-        for (int k = 0; k<m; k++){      //luego las claves (rectángulos de hijos)
+        for (ull k = 0; k<m; k++){      //luego las claves (rectángulos de hijos)
             if (k+ds >= R_totales){       //Hay menos de k mbr reales para el nodo
                 arr.push_back(0);
                 arr.push_back(0);
@@ -157,7 +192,7 @@ vector<int> vectorRTree(vector <Rectangulo> &r_vect, int m,
     // se calculan los mbrs
     vector <Rectangulo> mbrs(n_mbr,Rectangulo(Punto(0,0),Punto(0,0)));
     // Se recorre el vector de rectángulos para generar los MBR.
-    for (int rect = 0; rect < n_mbr; rect++){
+    for (ull rect = 0; rect < n_mbr; rect++){
         mbrs[rect] = calcularMBR(r_vect,rect*m,(rect+1)*m);
     }
     //DEBUG
@@ -167,15 +202,15 @@ vector<int> vectorRTree(vector <Rectangulo> &r_vect, int m,
     // si la cantidad de mbrs fué mayor a la cantidad de datos guardables en un nodo,
     // se repite una variación del algoritmo anterior.
     if (R_totales > m){
-        int last = 0;
-        int rects = n_mbr;
+        ull last = 0;
+        ull rects = n_mbr;
         while (true){
             //se ordenan los MBR según el método
             funcOrden(mbrs);
-            int ds = 0;
-            for (int padres = 0; padres < rects; padres++){
+            ull ds = 0;
+            for (ull padres = 0; padres < rects; padres++){
                 //inserción punteros a hijos
-                for (int k = 0; k<m; k++){
+                for (ull k = 0; k<m; k++){
                     if (k +ds >= n_mbr)
                         arr.push_back(0);        //Hay menos de k hijos reales para el nodo
                     else{
@@ -184,7 +219,7 @@ vector<int> vectorRTree(vector <Rectangulo> &r_vect, int m,
                     }
                 }
                 //inserción de claves (rectángulos de hijos)
-                for (int k = 0; k < m; k++){
+                for (ull k = 0; k < m; k++){
                     if (k+ds >= n_mbr){           //Hay menos de k mbr reales para el nodo
                         arr.push_back(0);
                         arr.push_back(0);
@@ -206,7 +241,7 @@ vector<int> vectorRTree(vector <Rectangulo> &r_vect, int m,
         if (last)       //si la siguiente es la última iteración, se rompe el bucle
           break;
         //se re-calculan los MBR
-        int br = n_mbr;
+        ull br = n_mbr;
         n_mbr = n_mbr/m;
         rects = n_mbr;
         // Se guarda cuantos elemntos será necesario quitar del vector;
@@ -215,12 +250,12 @@ vector<int> vectorRTree(vector <Rectangulo> &r_vect, int m,
         if (n_mbr>0){
           cout<<"MBRs to calculate: "<< n_mbr<<endl;
           vector <Rectangulo>  newmbr(n_mbr,Rectangulo(Punto(0,0),Punto(0,0)));
-          for (int rect = 0; rect < n_mbr; rect++){
+          for (ull rect = 0; rect < n_mbr; rect++){
               newmbr[rect] = calcularMBR(mbrs,rect*m,(rect+1)*m);
           }
           // se quitan los espacios innecesarios de mbrs
           mbrs = vector <Rectangulo> (n_mbr,Rectangulo(Punto(0,0),Punto(0,0)));
-          for (int i = 0; i<n_mbr; i++){
+          for (ull i = 0; i<n_mbr; i++){
               mbrs[i]= newmbr[i];
           }
           //DEBUG

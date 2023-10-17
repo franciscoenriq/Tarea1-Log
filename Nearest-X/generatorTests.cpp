@@ -1,6 +1,9 @@
 #include "NearestXRtree.cpp"
 using namespace std;
 
+// se definen los rangos en x e y para generar una nube de puntos
+#define xrange 100
+#define yrange 100
 
 
 //se definen los rangos en x e y para generar una nube de puntos
@@ -9,7 +12,8 @@ using namespace std;
 
 
 
-int main(){
+int main()
+{
     int m = 3;
     //prueba de crear un arreglo de rectángulos en base a un arreglo de puntos
     int N=11;
@@ -27,13 +31,14 @@ int main(){
     vector <Rectangulo> r =  makeRectArray(ptr, 4*N);
     for (int i = 0; i<N; i++){
 
-        cout << "Rectangulo "<<i+1 << '\n'
-        << "p1: "<<r[i].p1 <<" p2: "<< r[i].p2 << endl;
+        cout << "Rectangulo " << i + 1 << '\n'
+             << "p1: " << r[i].p1 << " p2: " << r[i].p2 << endl;
     }
-    //prueba de xquicksort
-    xquickSort(r,0,N-1);
-    for (int i = 0;i<N;i++){
-        cout<<"centro: "<<r[i].centro.x <<" " << r[i].p1<<' '<<r[i].p2 <<endl;
+    // prueba de xquicksort
+    xquickSort(r, 0, N - 1);
+    for (int i = 0; i < N; i++)
+    {
+        cout << "centro: " << r[i].centro.x << " " << r[i].p1 << ' ' << r[i].p2 << endl;
     }
     //prueba de calcular mbr
     Rectangulo mbr = calcularMBR(r,0,N);
@@ -50,26 +55,29 @@ int main(){
     fread(nll,sizeof(int),2,arch);          //se lee el nulo
     //fread(rect,sizeof(int),5*N,arch);      //se leen rectángulos
 
-    //Notar que de esta parte en adelante, es posible recorrer o rescatar
-    //los valores del binario usando un ciclo while e indicando offsets múltiplos
-    // de 5*m
-    int size = N/m;                        // tamaño del siguiente sector de nodos
-    if (N%m != 0 && size != 1) size++;
-    int n1[5*m*size];             // tamaño (rectangulo +puntero)*capacidad nodo * cantidad mbrs
-    fread(n1,sizeof(int),5*size*m,arch);   //se leen los nodos padres
-    int tmp=size;
-    size = size/m;
-    if (tmp%m != 0 && tmp != 1) size++;
-    int n2[5*m*size];
-    fread(n2,sizeof(int),5*m*size,arch);    //se leen los nodos abuelos
-    tmp=size;
-    size = size/m;
-    if (tmp%m != 0 && tmp != 1) size++;
-    int n3[5*m*size];
-    fread(n3,sizeof(int),5*m*size,arch);   //se lee la raíz
-    fclose(arch);                          //se cierra el archivo
+    // Notar que de esta parte en adelante, es posible recorrer o rescatar
+    // los valores del binario usando un ciclo while e indicando offsets múltiplos
+    //  de 5*m
+    int size = N / m; // tamaño del siguiente sector de nodos
+    if (N % m != 0 && size != 1)
+        size++;
+    int n1[5 * m * size];                       // tamaño (rectangulo +puntero)*capacidad nodo * cantidad mbrs
+    fread(n1, sizeof(int), 5 * size * m, arch); // se leen los nodos padres
+    int tmp = size;
+    size = size / m;
+    if (tmp % m != 0 && tmp != 1)
+        size++;
+    int n2[5 * m * size];
+    fread(n2, sizeof(int), 5 * m * size, arch); // se leen los nodos abuelos
+    tmp = size;
+    size = size / m;
+    if (tmp % m != 0 && tmp != 1)
+        size++;
+    int n3[5 * m * size];
+    fread(n3, sizeof(int), 5 * m * size, arch); // se lee la raíz
+    fclose(arch);                               // se cierra el archivo
 
-    //impresión de la información del binario
+    // impresión de la información del binario
     int ct = 0;
     /*cout<<"Arbol con m = "<< m <<endl;
     cout<<"Hojas: "<<'\n';
@@ -92,7 +100,7 @@ int main(){
             cout<<'\n';
             ct = 0;
         }
-        cout<<x<<" ";
+        cout << x << " ";
         ct++;
     }
     ct = m*5;
@@ -103,7 +111,7 @@ int main(){
             cout<<'\n';
             ct = 0;
         }
-        cout<<x<<" ";
+        cout << x << " ";
         ct++;
     }
     ct = m*5;
@@ -114,19 +122,19 @@ int main(){
             cout<<'\n';
             ct = 0;
         }
-        cout<<x<<" ";
+        cout << x << " ";
         ct++;
     }
-    cout<<endl;
-    //se lee el archivo completo en cadena
-    arch=fopen("xRTree","rb");
-    int stream[(5*m*N)+1];
+    cout << endl;
+    // se lee el archivo completo en cadena
+    arch = fopen("xRTree", "rb");
+    int stream[(5 * m * N) + 1];
     int l = sizeof(*arch);
-    fread(stream,sizeof(int),5*m*N+1,arch);   //se lee la raíz
+    fread(stream, sizeof(int), 5 * m * N + 1, arch); // se lee la raíz
     fclose(arch);
     for (const auto x : stream){
         cout<<x<<' ';
     }
-    cout<<"tamaño archivo: "<<l<<endl;
+    cout << "tamaño archivo: " << l << endl;
     return 0;
 }

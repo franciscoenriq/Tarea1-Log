@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int m = 2;
+ull m = 2;
 
 int main()
 {
@@ -45,10 +45,10 @@ int main()
     }
     cout << endl;
 
-    vector<int> rTree = vectorRTree(copia, m, ordenarHilbert);
+    vector<ull> rTree = vectorRTree(copia, m, ordenarHilbert);
     cout << "vector RTree:" << endl;
     cout << "Nodo:"<<endl;
-    int pos = 0;
+    ull pos = 0;
     for (const auto &val : rTree)
     {
         if (pos == 2 || (pos-2)&(m*5)==0)
@@ -61,8 +61,10 @@ int main()
     }
     cout << endl;
 
-    const char* fileName = "HilbertRTree.bin";
+    char *fileName = "HilbertRTree.bin";
     grabarVector(rTree, fileName);
+    char *file2 = "HilbertRTree.bin";
+    leerBinFile(file2);
 
     return 0;
 }

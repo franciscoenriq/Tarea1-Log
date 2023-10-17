@@ -2,13 +2,15 @@
 #include <vector>
 #include <cstdint>
 
+typedef unsigned long long ull;
+
 // Estructura para representar un punto en el plano 2D ==========================
 struct Punto
 {
-    int x;
-    int y;
+    ull x;
+    ull y;
 
-    Punto(int x, int y) : x(x), y(y) {}
+    Punto(ull x, ull y) : x(x), y(y) {}
 };
 
 // Función para calcular el centro de un Rectángulo ======================
