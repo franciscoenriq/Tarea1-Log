@@ -9,25 +9,22 @@ using namespace std;
 
 ull m = 2;
 
+
+
 int main()
 {
     // Inicializa la semilla aleatoria para obtener números aleatorios diferentes en cada ejecución
     srand(static_cast<unsigned int>(time(nullptr)));
 
-    vector<Rectangulo> rectangulos1;
-    rectangulos1.push_back(Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum())));
-    rectangulos1.push_back(Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum())));
-    rectangulos1.push_back(Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum())));
-    rectangulos1.push_back(Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum())));
-    rectangulos1.push_back(Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum())));
-    rectangulos1.push_back(Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum())));
-    rectangulos1.push_back(Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum())));
-    rectangulos1.push_back(Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum())));
-    rectangulos1.push_back(Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum())));
-    rectangulos1.push_back(Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum())));
-
+    vector<Rectangulo> vRects;
+    for (int i = 0; i < 20; i++)
+    {
+        Rectangulo rectttt = Rectangulo(Punto(randomNum(), randomNum()), Punto(randomNum(), randomNum()));
+        vRects.push_back(rectttt);
+        cout << rectttt << " ";
+    }
     vector<Rectangulo> copia;
-    copia.assign(rectangulos1.begin(), rectangulos1.end());
+    copia.assign(vRects.begin(), vRects.end());
 
     cout << "Orden Original:" << endl;
     for (const auto &rect : copia)
@@ -36,24 +33,27 @@ int main()
     }
     cout << endl;
 
-    ordenarHilbert(rectangulos1);
+    ordenarHilbert(vRects);
 
     cout << "Ordenado con Hilbert:" << endl;
-    for (const auto &rect : rectangulos1)
+    for (const auto &rect : vRects)
     {
         cout << rect.centro << " ";
     }
     cout << endl;
 
-    vector<ull> rTree = vectorRTree(copia, m, ordenarHilbert);
+    vector<ull> rTree = vectorRTree(vRects, m, ordenarHilbert);
     cout << "vector RTree_";
     ull pos = 0;
     for (const auto &val : rTree)
     {
-        if (pos == 2 || (pos-2)&(m*5)==0)
-            cout<<'\n'<<"Nodo: ";
-        if (pos==1){
-            cout<<'\n'<<"puntero: ";
+        if (pos == 2 || (pos - 2) & (m * 5) == 0)
+            cout << '\n'
+                 << "Nodo: ";
+        if (pos == 1)
+        {
+            cout << '\n'
+                 << "puntero: ";
         }
         cout << val << " ";
         pos++;
@@ -62,8 +62,9 @@ int main()
 
     char *fileName = "HilbertRTree.bin";
     grabarVector(rTree, fileName);
-    char *file2 = "HilbertRTree.bin";
-    leerBinFile(file2);
+    leerBinFile(fileName);
 
+
+   
     return 0;
 }

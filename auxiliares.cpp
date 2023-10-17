@@ -1,20 +1,24 @@
 #include <iterator>
 #include <functional>
 #include <cstdlib> //rand()
-    #include <iostream>
+#include <iostream>
 #include <fstream>
 #include <vector>
+#include <iostream>
+#include <random>
 #include "NodoRTree.cpp"
 
 #define d_int int
 using namespace std;
 typedef unsigned long long ull;
 
-ull leerBinFile(char *fileName){
+ull leerBinFile(char *fileName)
+{
 
     std::ifstream archivo(fileName, std::ios::binary);
 
-    if (!archivo) {
+    if (!archivo)
+    {
         std::cerr << "No se pudo abrir el archivo." << std::endl;
         return 1;
     }
@@ -22,7 +26,8 @@ ull leerBinFile(char *fileName){
     std::vector<ull> enteros;
     ull entero;
 
-    while (archivo.read(reinterpret_cast<char*>(&entero), sizeof(ull))) {
+    while (archivo.read(reinterpret_cast<char *>(&entero), sizeof(ull)))
+    {
         enteros.push_back(entero);
     }
 
@@ -30,36 +35,52 @@ ull leerBinFile(char *fileName){
 
     // Ahora tienes los enteros almacenados en el vector "enteros".
     // Puedes realizar operaciones con ellos o mostrarlos.
+    std::cout << "   archivo:     " << endl;
     std::cout << sizeof(enteros[0]) << " ";
-    for (ull num : enteros) {
+    for (ull num : enteros)
+    {
         std::cout << num << " ";
     }
-   // std::cout << sizeof(enteros[0]) << " "<< endl;
+    // std::cout << sizeof(enteros[0]) << " "<< endl;
     return 0;
 }
 
-
-
 ull randomNum(ull minimo = 0, ull maximo = 500000)
 {
-    // Genera un número aleatorio entre minimo y (maximo - 1)
-    ull numeroAleatorio = std::rand() % (maximo - minimo) + minimo;
+    // Crear un generador de números aleatorios
+    random_device rd;  // Usar un dispositivo de hardware para generar semillas aleatorias
+    mt19937 gen(rd()); // Utilizar el algoritmo Mersenne Twister
+
+    // Definir el rango de números aleatorios
+    ull min = minimo;
+    ull max = maximo;
+
+    // Crear una distribución uniforme en el rango deseado
+    std::uniform_int_distribution<> distribution(min, max);
+
+    // Generar un número aleatorio
+    ull numeroAleatorio = distribution(gen);
+
     return numeroAleatorio;
+
+
 }
 
 /* función auxiliar que genera un vector de rectángulos en base a N puntos */
-vector <Rectangulo> makeRectArray(ull arr[], int N){
+vector<Rectangulo> makeRectArray(ull arr[], int N)
+{
     int L = N >> 2;
-    vector<Rectangulo>vec(L, Rectangulo(Punto(0,0),Punto(0,0)));
-    for (int i = 0; i  <L; i++){
-        d_int x1 =arr[i*4];
-        d_int y1 =arr[i*4+1];
-        d_int x2 =arr[i*4+2];
-        d_int y2 =arr[i*4+3];
-        Rectangulo rect = Rectangulo(Punto(x1,y1),Punto(x2,y2)); 
+    vector<Rectangulo> vec(L, Rectangulo(Punto(0, 0), Punto(0, 0)));
+    for (int i = 0; i < L; i++)
+    {
+        d_int x1 = arr[i * 4];
+        d_int y1 = arr[i * 4 + 1];
+        d_int x2 = arr[i * 4 + 2];
+        d_int y2 = arr[i * 4 + 3];
+        Rectangulo rect = Rectangulo(Punto(x1, y1), Punto(x2, y2));
         vec[i] = rect;
     }
-   return vec;
+    return vec;
 }
 
 bool intersectan(Rectangulo rect1, Rectangulo rect2)
@@ -110,19 +131,23 @@ Rectangulo calcularMBR(vector<Rectangulo> &listaRectangulos, ull start, ull end)
     return Rectangulo(Punto(minX, minY), Punto(maxX, maxY));
 }
 
-
 /*Función auxiliar para grabar un vector en memoria */
-void grabarVector(vector<ull> vect, char* fileName){
-    FILE* arch;
+void grabarVector(vector<ull> vect, char *fileName)
+{
+    FILE *arch;
     arch = fopen(fileName, "wt");
-    if (arch) {
+    if (arch)
+    {
         std::cout << "Iniciando escritura ..." << std::endl;
-        for (ull data : vect) {
+        for (ull data : vect)
+        {
             fwrite(&data, sizeof(ull), 1, arch);
         }
-        
+
         std::cout << "Archivo '" << fileName << "' creado y datos escritos con éxito." << std::endl;
-    } else {
+    }
+    else
+    {
         std::cerr << "No se pudo abrir el archivo '" << fileName << "'." << std::endl;
     }
     fclose(arch);
@@ -141,132 +166,157 @@ La estructura final dispone de los datos en nodos de la siguiente forma en memor
             k  para punteros (offset) a hijos.
 --- se tienen R/m nodos en total
 */
-vector<ull> vectorRTree(vector <Rectangulo> &r_vect, ull m, 
-                        function <void (vector<Rectangulo> &)> funcOrden){
+vector<ull> vectorRTree(vector<Rectangulo> &r_vect, ull m,
+                        function<void(vector<Rectangulo> &)> funcOrden)
+{
     // suponemos que los rectangulos vienen ordenados
 
-    //vector que contendrá los datos a insertar en la iteración actual
-    vector <ull> arr(2,0);
+    // vector que contendrá los datos a insertar en la iteración actual
+    vector<ull> arr(2, 0);
     // se calcula la cantidad de rectángulos totales
     ull R_totales = r_vect.size();
-    cout<<"Size of vector: "<< R_totales <<endl;
-    //Se ordenan los rectángulos del vector de entrada según el método
+    cout << "Size of vector: " << R_totales << endl;
+    // Se ordenan los rectángulos del vector de entrada según el método
     funcOrden(r_vect);
     // PRIMERA ITERACIÓN
-    //se calcula la cantidad de mbrs a calcular. Esto puede variar dependiendo del método
-    //Notar que esto también corresponde a cuantos nodos se crearán en esta iteración
-    ull n_mbr = R_totales/m;
-    if (R_totales%m != 0 && R_totales != 1) n_mbr++;     //si existe algun resto, se debe calcular un mbr más
-    //contador de inserciones
+    // se calcula la cantidad de mbrs a calcular. Esto puede variar dependiendo del método
+    // Notar que esto también corresponde a cuantos nodos se crearán en esta iteración
+    ull n_mbr = R_totales / m;
+    if (R_totales % m != 0 && R_totales != 1)
+        n_mbr++; // si existe algun resto, se debe calcular un mbr más
+    // contador de inserciones
     ull data = 0;
     // algoritmo de construcción
-    ull offset = 2 + m;   // se establece la posición del primer nodo hijo
-    //Se van insertando los nodos padre de a m datos
-    for (ull padres = 0; padres < n_mbr; padres++){
-        ull ds = m*padres;              //desplazamiento de los padres por los mbrs
-        for (ull k = 0; k<m; k++){      //primero los "punteros" a hijos
+    ull offset = 2 + m; // se establece la posición del primer nodo hijo
+    // Se van insertando los nodos padre de a m datos
+    for (ull padres = 0; padres < n_mbr; padres++)
+    {
+        ull ds = m * padres; // desplazamiento de los padres por los mbrs
+        for (ull k = 0; k < m; k++)
+        { // primero los "punteros" a hijos
             if (k >= R_totales)
-                arr.push_back(0);//Hay menos de k hijos reales para el nodo
+                arr.push_back(0); // Hay menos de k hijos reales para el nodo
             else
                 arr.push_back(offset);
-            offset +=5;                 //se avanza a la primera posición de la siguiente hoja
+            offset += 5; // se avanza a la primera posición de la siguiente hoja
         }
-        for (ull k = 0; k<m; k++){      //luego las claves (rectángulos de hijos)
-            if (k+ds >= R_totales){       //Hay menos de k mbr reales para el nodo
+        for (ull k = 0; k < m; k++)
+        { // luego las claves (rectángulos de hijos)
+            if (k + ds >= R_totales)
+            { // Hay menos de k mbr reales para el nodo
                 arr.push_back(0);
                 arr.push_back(0);
                 arr.push_back(0);
                 arr.push_back(0);
             }
-            else {
-                arr.push_back(r_vect[k+ds].inf_izq.x);
-                arr.push_back(r_vect[k+ds].inf_izq.y);
-                arr.push_back(r_vect[k+ds].sup_der.x);
-                arr.push_back(r_vect[k+ds].sup_der.y);
+            else
+            {
+                arr.push_back(r_vect[k + ds].inf_izq.x);
+                arr.push_back(r_vect[k + ds].inf_izq.y);
+                arr.push_back(r_vect[k + ds].sup_der.x);
+                arr.push_back(r_vect[k + ds].sup_der.y);
                 data++;
             }
-        }ds +=1;
+        }
+        ds += 1;
     }
-    offset = 2; //se retrocede el offset al primer nodo hijo
+    offset = 2; // se retrocede el offset al primer nodo hijo
     // Se calculan los MBR
-    cout<<"Starting..."<<"MBRs to calculate: "<< n_mbr<<endl;
+    cout << "Starting..."
+         << "MBRs to calculate: " << n_mbr << endl;
     // se calculan los mbrs
-    vector <Rectangulo> mbrs(n_mbr,Rectangulo(Punto(0,0),Punto(0,0)));
+    vector<Rectangulo> mbrs(n_mbr, Rectangulo(Punto(0, 0), Punto(0, 0)));
     // Se recorre el vector de rectángulos para generar los MBR.
-    for (ull rect = 0; rect < n_mbr; rect++){
-        mbrs[rect] = calcularMBR(r_vect,rect*m,(rect+1)*m);
+    for (ull rect = 0; rect < n_mbr; rect++)
+    {
+        mbrs[rect] = calcularMBR(r_vect, rect * m, (rect + 1) * m);
     }
-    //DEBUG
-    for (Rectangulo x :mbrs){
-        cout<<"MBR: "<<x.inf_izq.x<<','<<x.inf_izq.y<<';'<<x.sup_der.x<<','<<x.sup_der.y<<endl;
+    // DEBUG
+    for (Rectangulo x : mbrs)
+    {
+        cout << "MBR: " << x.inf_izq.x << ',' << x.inf_izq.y << ';' << x.sup_der.x << ',' << x.sup_der.y << endl;
     }
     // si la cantidad de mbrs fué mayor a la cantidad de datos guardables en un nodo,
     // se repite una variación del algoritmo anterior.
-    if (R_totales > m){
+    if (R_totales > m)
+    {
         ull last = 0;
         ull rects = n_mbr;
-        while (true){
-            //se ordenan los MBR según el método
+        while (true)
+        {
+            // se ordenan los MBR según el método
             funcOrden(mbrs);
             ull ds = 0;
-            for (ull padres = 0; padres < rects; padres++){
-                //inserción punteros a hijos
-                for (ull k = 0; k<m; k++){
-                    if (k +ds >= n_mbr)
-                        arr.push_back(0);        //Hay menos de k hijos reales para el nodo
-                    else{
+            for (ull padres = 0; padres < rects; padres++)
+            {
+                // inserción punteros a hijos
+                for (ull k = 0; k < m; k++)
+                {
+                    if (k + ds >= n_mbr)
+                        arr.push_back(0); // Hay menos de k hijos reales para el nodo
+                    else
+                    {
                         arr.push_back(offset);
-                        offset +=5*m;                 //se avanza a la primera posición de la siguiente hoja
+                        offset += 5 * m; // se avanza a la primera posición de la siguiente hoja
                     }
                 }
-                //inserción de claves (rectángulos de hijos)
-                for (ull k = 0; k < m; k++){
-                    if (k+ds >= n_mbr){           //Hay menos de k mbr reales para el nodo
+                // inserción de claves (rectángulos de hijos)
+                for (ull k = 0; k < m; k++)
+                {
+                    if (k + ds >= n_mbr)
+                    { // Hay menos de k mbr reales para el nodo
                         arr.push_back(0);
                         arr.push_back(0);
                         arr.push_back(0);
                         arr.push_back(0);
                         rects--;
                     }
-                    else {
-                        arr.push_back(mbrs[k+ds].inf_izq.x);
-                        arr.push_back(mbrs[k+ds].inf_izq.y);
-                        arr.push_back(mbrs[k+ds].sup_der.x);
-                        arr.push_back(mbrs[k+ds].sup_der.y);
+                    else
+                    {
+                        arr.push_back(mbrs[k + ds].inf_izq.x);
+                        arr.push_back(mbrs[k + ds].inf_izq.y);
+                        arr.push_back(mbrs[k + ds].sup_der.x);
+                        arr.push_back(mbrs[k + ds].sup_der.y);
                         data++;
                     }
-                }ds += m;
+                }
+                ds += m;
             }
             if (rects == 0)
                 break;
-        if (last)       //si la siguiente es la última iteración, se rompe el bucle
-          break;
-        //se re-calculan los MBR
-        ull br = n_mbr;
-        n_mbr = n_mbr/m;
-        rects = n_mbr;
-        // Se guarda cuantos elemntos será necesario quitar del vector;
-        if (br != 1 && br%m != 0) n_mbr++;
-        // Se recorre el vector de mbrs para generar otros MBR
-        if (n_mbr>0){
-          cout<<"MBRs to calculate: "<< n_mbr<<endl;
-          vector <Rectangulo>  newmbr(n_mbr,Rectangulo(Punto(0,0),Punto(0,0)));
-          for (ull rect = 0; rect < n_mbr; rect++){
-              newmbr[rect] = calcularMBR(mbrs,rect*m,(rect+1)*m);
-          }
-          // se quitan los espacios innecesarios de mbrs
-          mbrs = vector <Rectangulo> (n_mbr,Rectangulo(Punto(0,0),Punto(0,0)));
-          for (ull i = 0; i<n_mbr; i++){
-              mbrs[i]= newmbr[i];
-          }
-          //DEBUG
-          for (Rectangulo x :mbrs){
-              cout<<"MBR*: "<<x.inf_izq.x<<','<<x.inf_izq.y<<';'<<x.sup_der.x<<','<<x.sup_der.y<<endl;
-          }
+            if (last) // si la siguiente es la última iteración, se rompe el bucle
+                break;
+            // se re-calculan los MBR
+            ull br = n_mbr;
+            n_mbr = n_mbr / m;
+            rects = n_mbr;
+            // Se guarda cuantos elemntos será necesario quitar del vector;
+            if (br != 1 && br % m != 0)
+                n_mbr++;
+            // Se recorre el vector de mbrs para generar otros MBR
+            if (n_mbr > 0)
+            {
+                cout << "MBRs to calculate: " << n_mbr << endl;
+                vector<Rectangulo> newmbr(n_mbr, Rectangulo(Punto(0, 0), Punto(0, 0)));
+                for (ull rect = 0; rect < n_mbr; rect++)
+                {
+                    newmbr[rect] = calcularMBR(mbrs, rect * m, (rect + 1) * m);
+                }
+                // se quitan los espacios innecesarios de mbrs
+                mbrs = vector<Rectangulo>(n_mbr, Rectangulo(Punto(0, 0), Punto(0, 0)));
+                for (ull i = 0; i < n_mbr; i++)
+                {
+                    mbrs[i] = newmbr[i];
+                }
+                // DEBUG
+                for (Rectangulo x : mbrs)
+                {
+                    cout << "MBR*: " << x.inf_izq.x << ',' << x.inf_izq.y << ';' << x.sup_der.x << ',' << x.sup_der.y << endl;
+                }
+            }
+            if (n_mbr - 1 == 0)
+                last = 1; // se marca como ultima la siguiente iteración
         }
-        if (n_mbr -1 ==0)
-            last = 1;   //se marca como ultima la siguiente iteración
-      }
     }
     // Se escribe el puntero al nodo raíz
     arr[1] = offset;
