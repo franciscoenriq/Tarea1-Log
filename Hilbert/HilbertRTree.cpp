@@ -9,16 +9,18 @@
 #include "../auxiliares.cpp"
 
 using namespace std;
+typedef unsigned long long ull;
+
 
 // Código desde wikipedia para pasar de un punto x,y a d
 
 // Declaración anticipada de la función rot
-void rot(int n, int &x, int &y, int rx, int ry);
+void rot(ull n, ull &x, ull &y, ull rx, ull ry);
 
 // Convierte (x, y) a d
-int xy2d(int n, int x, int y)
+ull xy2d(ull n, ull x, ull y)
 {
-    int rx, ry, s, d = 0;
+    ull rx, ry, s, d = 0;
     for (s = n / 2; s > 0; s /= 2)
     {
         rx = (x & s) > 0;
@@ -26,13 +28,15 @@ int xy2d(int n, int x, int y)
         d += s * s * ((3 * rx) ^ ry);
         rot(s, x, y, rx, ry);
     }
+
+    cout << d << " " << endl;
     return d;
 }
 
 // Convierte d a (x, y)
-void d2xy(int n, int d, int &x, int &y)
+void d2xy(ull n, ull d, ull &x, ull &y)
 {
-    int rx, ry, s, t = d;
+    ull rx, ry, s, t = d;
     x = y = 0;
     for (s = 1; s < n; s *= 2)
     {
@@ -46,9 +50,9 @@ void d2xy(int n, int d, int &x, int &y)
 }
 
 // Rotar/voltear un cuadrante apropiadamente
-void rot(int n, int &x, int &y, int rx, int ry)
+void rot(ull n, ull &x, ull &y, ull rx, ull ry)
 {
-    int t;
+    ull t;
     if (ry == 0)
     {
         if (rx == 1)
@@ -62,20 +66,13 @@ void rot(int n, int &x, int &y, int rx, int ry)
     }
 }
 
-bool compararPorD(Rectangulo a, Rectangulo b, int n)
+bool compararPorD(Rectangulo a, Rectangulo b, ull n)
 {
     const Punto centroA = a.centro;
     const Punto centroB = b.centro;
-    int valorA = xy2d(n, centroA.x, centroA.y);
-    int valorB = xy2d(n, centroB.x, centroB.y);
+    ull valorA = xy2d(n, centroA.x, centroA.y);
+    ull valorB = xy2d(n, centroB.x, centroB.y);
 
-    // Imprimir los puntos
-    cout << "Punto A: " << centroA << endl;
-    cout << "Punto B: " << centroB << endl;
-
-    // Imprimir el valor de valorA y valorB
-    cout << "Valor de valorA: " << valorA << endl;
-    cout << "Valor de valorB: " << valorB << endl;
 
     return valorA < valorB;
 }
@@ -84,10 +81,10 @@ void ordenarHilbert(vector<Rectangulo> &lRect)
 {
 
     // calcular n necesario
-    int minX = numeric_limits<int>::max();
-    int minY = numeric_limits<int>::max();
-    int maxX = numeric_limits<int>::min();
-    int maxY = numeric_limits<int>::min();
+    ull minX = numeric_limits<ull>::max();
+    ull minY = numeric_limits<ull>::max();
+    ull maxX = numeric_limits<ull>::min();
+    ull maxY = numeric_limits<ull>::min();
 
     for (const auto &rect : lRect)
     {
@@ -97,24 +94,27 @@ void ordenarHilbert(vector<Rectangulo> &lRect)
         maxY = max(maxY, rect.centro.y);
     };
 
-    int ancho_espacio = maxX - minX;
-    int alto_espacio = maxY - minY;
-    int nivel = log2(max(ancho_espacio, alto_espacio));
-    int n = pow(2, nivel);
+    ull ancho_espacio = maxX - minX;
+    ull alto_espacio = maxY - minY;
+    ull nivel = log2(max(ancho_espacio, alto_espacio));
+    ull n = pow(2, nivel);
+    cout << n << " " << endl;
+
+
 
     sort(lRect.begin(), lRect.end(), [n](Rectangulo a, Rectangulo b)
          { return compararPorD(a, b, n); }); // ordenamos ds según d
 }
 
-void HilbertRTree(vector<Rectangulo> &lRect, int m)
+void HilbertRTree(vector<Rectangulo> &lRect, ull m)
 {
     // primero, ordenar los rectangulos segun la curva
     ordenarHilbert(lRect);
 
     // segundo, pasar la lista a un vector que representa al RTree
-    vector<int> vArbol = vectorRTree(lRect, m);
+    vector<ull> vArbol = vectorRTree(lRect, m);
 
     // finalmente, escribir el vector en un archivo binario
-      const char* fileName = "HilbertRTree.bin";
+    char* fileName = "HilbertRTree.bin";
     grabarVector(vArbol, fileName);
 }
