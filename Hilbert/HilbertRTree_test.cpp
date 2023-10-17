@@ -46,8 +46,7 @@ int main()
     cout << endl;
 
     vector<ull> rTree = vectorRTree(copia, m, ordenarHilbert);
-    cout << "vector RTree:" << endl;
-    cout << "Nodo:"<<endl;
+    cout << "vector RTree_";
     ull pos = 0;
     for (const auto &val : rTree)
     {

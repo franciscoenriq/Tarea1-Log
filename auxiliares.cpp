@@ -48,7 +48,7 @@ ull randomNum(ull minimo = 0, ull maximo = 500000)
 }
 
 /* función auxiliar que genera un vector de rectángulos en base a N puntos */
-vector <Rectangulo> makeRectArray(int arr[], int N){
+vector <Rectangulo> makeRectArray(ull arr[], int N){
     int L = N >> 2;
     vector<Rectangulo>vec(L, Rectangulo(Punto(0,0),Punto(0,0)));
     for (int i = 0; i  <L; i++){
@@ -113,18 +113,19 @@ Rectangulo calcularMBR(vector<Rectangulo> &listaRectangulos, ull start, ull end)
 
 /*Función auxiliar para grabar un vector en memoria */
 void grabarVector(vector<ull> vect, char* fileName){
-     FILE* arch;
+    FILE* arch;
     arch = fopen(fileName, "wt");
     if (arch) {
         std::cout << "Iniciando escritura ..." << std::endl;
         for (ull data : vect) {
             fwrite(&data, sizeof(ull), 1, arch);
         }
-        fclose(arch);
+        
         std::cout << "Archivo '" << fileName << "' creado y datos escritos con éxito." << std::endl;
     } else {
         std::cerr << "No se pudo abrir el archivo '" << fileName << "'." << std::endl;
     }
+    fclose(arch);
 }
 /*
 Función que  genera un array que linealmente representa a un  RTree
@@ -145,7 +146,7 @@ vector<ull> vectorRTree(vector <Rectangulo> &r_vect, ull m,
     // suponemos que los rectangulos vienen ordenados
 
     //vector que contendrá los datos a insertar en la iteración actual
-    vector <ull> arr(1,0);
+    vector <ull> arr(2,0);
     // se calcula la cantidad de rectángulos totales
     ull R_totales = r_vect.size();
     cout<<"Size of vector: "<< R_totales <<endl;
