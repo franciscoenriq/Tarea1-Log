@@ -14,10 +14,10 @@ using namespace std;
 
 int main()
 {
-    int m = 3;
+    int m = 2;
     //prueba de crear un arreglo de rectángulos en base a un arreglo de puntos
     int N=11;
-      int ptr[]={9,8,10,9,
+      ull ptr[]={9,8,10,9,
                     1,1,3,2,
                     5,5,6,6,
                     9,10,11,11,
@@ -44,97 +44,41 @@ int main()
     Rectangulo mbr = calcularMBR(r,0,N);
         cout<<"MBR: "<<mbr.p1<<','<<mbr.p2<<endl;
     //prueba de generación del binario
-    vector<int> puntosRtree = nX_RTree(r,m);
-    grabarVector(puntosRtree,"xRTree");
 
+    vector<ull> puntosRtree = vectorRTree(r,m,ordenNearestX);
+    grabarVector(puntosRtree,"xRTree.bin");
+    // se lee el archivo completo en cadena
+    char *file2 = "xRTree.bin";
+    leerBinFile(file2);
+/*
     //prueba de lectura del binario
-    FILE *arch=fopen("xRTree","rb");
-    int blk_size=(sizeof(int));
-    //int rect[5*N];
-    int nll[2];
-    fread(nll,sizeof(int),2,arch);          //se lee el nulo
-    //fread(rect,sizeof(int),5*N,arch);      //se leen rectángulos
-
-    // Notar que de esta parte en adelante, es posible recorrer o rescatar
-    // los valores del binario usando un ciclo while e indicando offsets múltiplos
-    //  de 5*m
-    int size = N / m; // tamaño del siguiente sector de nodos
-    if (N % m != 0 && size != 1)
-        size++;
-    int n1[5 * m * size];                       // tamaño (rectangulo +puntero)*capacidad nodo * cantidad mbrs
-    fread(n1, sizeof(int), 5 * size * m, arch); // se leen los nodos padres
-    int tmp = size;
-    size = size / m;
-    if (tmp % m != 0 && tmp != 1)
-        size++;
-    int n2[5 * m * size];
-    fread(n2, sizeof(int), 5 * m * size, arch); // se leen los nodos abuelos
-    tmp = size;
-    size = size / m;
-    if (tmp % m != 0 && tmp != 1)
-        size++;
-    int n3[5 * m * size];
-    fread(n3, sizeof(int), 5 * m * size, arch); // se lee la raíz
-    fclose(arch);                               // se cierra el archivo
+    vector <ull> datos;
+    ull entero;
+    FILE *arch = fopen("xRtree.bin","rb");
+    ifstream f("xRtree.bin", ios::binary);
+        fread( &entero,sizeof(entero),1,arch);
+        while (entero != NULL){
+            fread(entero,sizeof(unsigned long long int),1,arch);
+            datos.push_back(entero);
+        }
+    fclose(arch);  // se cierra el archivo
 
     // impresión de la información del binario
+    int l = datos.size();
+    cout << "tamaño archivo: "<< l << endl;
     int ct = 0;
-    /*cout<<"Arbol con m = "<< m <<endl;
-    cout<<"Hojas: "<<'\n';
-    for (int x: rect){
-        if (ct == 5){   //es posible leer la hojas iterando de a 5 int
-            cout<<'\n';
-            ct = 0;
+    int i = (5*m*N);
+    cout<<'\n'<<"N1: ";
+    for (ull x = 2; x< datos.size(); x++){
+        if (ct&5 == 0){
+            cout<<" N"<<ct/5*m<<": ";
         }
-        cout<<x<<" ";
-        ct++;
-    }
-    cout<<endl;
-    */
-   for (const auto x : nll)
-    cout<<x<<endl;
-    cout<<"Padres: ";
-    ct = m*5;
-    for (const auto x: n1){
-        if (ct == m*5){ //es posible ver el resto de los nodos iterando de 5*m int
-            cout<<'\n';
-            ct = 0;
+        if(ct == i){
+            cout<<'\n'<<"Nuevo bloque de nodos"<<endl;
+            i = i/m;
         }
-        cout << x << " ";
-        ct++;
-    }
-    ct = m*5;
-    cout<<endl;
-    cout<<"Abuelos: ";
-    for (const auto x: n2){
-        if (ct == m*5){
-            cout<<'\n';
-            ct = 0;
-        }
-        cout << x << " ";
-        ct++;
-    }
-    ct = m*5;
-    cout<<endl;
-    cout<<"Raíz: ";
-    for (const auto x: n3){
-        if (ct == m*5){
-            cout<<'\n';
-            ct = 0;
-        }
-        cout << x << " ";
-        ct++;
-    }
-    cout << endl;
-    // se lee el archivo completo en cadena
-    arch = fopen("xRTree", "rb");
-    int stream[(5 * m * N) + 1];
-    int l = sizeof(*arch);
-    fread(stream, sizeof(int), 5 * m * N + 1, arch); // se lee la raíz
-    fclose(arch);
-    for (const auto x : stream){
-        cout<<x<<' ';
-    }
-    cout << "tamaño archivo: " << l << endl;
-    return 0;
+        cout<<datos[x]<<' ';
+   }
+    cout << endl;*/
+ return 0;
 }
