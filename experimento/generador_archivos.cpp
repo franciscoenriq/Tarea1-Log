@@ -30,7 +30,7 @@ vector<ull> generateLRect(ull max_side_length, ull max_value, ull total)
     vector<ull> result;
     for (ull i = 0; i < total; i++)
     {
-        //std::cout << i << std::endl;
+        // cout << i << endl;
         ull inf_izq_x = randomNum(0, max_value);
         ull inf_izq_y = randomNum(0, max_value);
         ull sup_der_x = randomNum(inf_izq_x, inf_izq_x + max_side_length);
@@ -41,7 +41,7 @@ vector<ull> generateLRect(ull max_side_length, ull max_value, ull total)
         result.push_back(sup_der_x);
         result.push_back(sup_der_y);
 
-        //cout << Rectangulo(Punto(inf_izq_x, inf_izq_y), Punto(sup_der_x, sup_der_y)) << " " << endl;
+        cout << Rectangulo(Punto(inf_izq_x, inf_izq_y), Punto(sup_der_x, sup_der_y)) << " " << endl;
     }
 
     return result;
@@ -49,20 +49,20 @@ vector<ull> generateLRect(ull max_side_length, ull max_value, ull total)
 
 int main()
 {
-    vector<ull> n = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}; // Inicializa un vector con 16 elementos
-    //vector<ull> n = {25};
-    // Vamos a generar un rectangulos iniciales y consultas por cada n
-    // generamos los Q y R por separado
+    //vector<ull> n = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}; // Inicializa un vector con 16 elementos
+    vector<ull> n = {20, 21, 22, 23, 24, 25};
+    //  Vamos a generar un rectangulos iniciales y consultas por cada n
+    //  generamos los Q y R por separado
     if (generarQ)
     {
         for (ull N : n)
         {
-            //std::cout << N << std::endl;
-            // preparamos nombre de archivo a escribir
+            // cout << N << endl;
+            //  preparamos nombre de archivo a escribir
             ull numero = N;
             char *archivoQbase = "Q_for_n_2_";
 
-            std::stringstream ss;
+            stringstream ss;
             ss << archivoQbase << numero;
 
             char *archivoQ = const_cast<char *>(ss.str().c_str());
@@ -79,13 +79,13 @@ int main()
     {
         for (ull N : n)
         {
-            //std::cout << N << std::endl;
+            // cout << N << endl;
 
             // preparamos nombre de archivo a escribir
             ull numero = N;
             char *archivoRbase = "R_for_n_2_";
 
-            std::stringstream ss;
+            stringstream ss;
             ss << archivoRbase << numero;
 
             char *archivoR = const_cast<char *>(ss.str().c_str());

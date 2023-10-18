@@ -12,18 +12,17 @@
 using namespace std;
 typedef unsigned long long ull;
 
-ull leerBinFile(char *fileName)
+vector<ull> recuperarVectorFromBinFile(char *fileName)
 {
 
-    std::ifstream archivo(fileName, std::ios::binary);
+    ifstream archivo(fileName, ios::binary);
 
     if (!archivo)
     {
-        std::cerr << "No se pudo abrir el archivo." << std::endl;
-        return 1;
+        cerr << "No se pudo abrir el archivo." << endl;
     }
 
-    std::vector<ull> enteros;
+    vector<ull> enteros;
     ull entero;
 
     while (archivo.read(reinterpret_cast<char *>(&entero), sizeof(ull)))
@@ -34,10 +33,40 @@ ull leerBinFile(char *fileName)
     archivo.close();
 
     // mostramos lo que habia
-    std::cout << "   archivo:     " << endl;
+    // cout << "   archivo:     " << endl;
+    // for (ull num : enteros)
+    // {
+    //     cout << num << " ";
+    // }
+    return enteros;
+}
+
+ull leerBinFile(char *fileName)
+{
+
+    ifstream archivo(fileName, ios::binary);
+
+    if (!archivo)
+    {
+        cerr << "No se pudo abrir el archivo." << endl;
+        return 1;
+    }
+
+    vector<ull> enteros;
+    ull entero;
+
+    while (archivo.read(reinterpret_cast<char *>(&entero), sizeof(ull)))
+    {
+        enteros.push_back(entero);
+    }
+
+    archivo.close();
+
+    // mostramos lo que habia
+    cout << "   archivo:     " << endl;
     for (ull num : enteros)
     {
-        std::cout << num << " ";
+        cout << num << " ";
     }
     return 0;
 }
@@ -53,14 +82,12 @@ ull randomNum(ull minimo = 0, ull maximo = 500000)
     ull max = maximo;
 
     // Crear una distribución uniforme en el rango deseado
-    std::uniform_int_distribution<> distribution(min, max);
+    uniform_int_distribution<> distribution(min, max);
 
     // Generar un número aleatorio
     ull numeroAleatorio = distribution(gen);
 
     return numeroAleatorio;
-
-
 }
 
 /* función auxiliar que genera un vector de rectángulos en base a N puntos */
@@ -135,17 +162,17 @@ void grabarVector(vector<ull> vect, char *fileName)
     arch = fopen(fileName, "wt");
     if (arch)
     {
-        std::cout << "Iniciando escritura ..." << std::endl;
+        cout << "Iniciando escritura ..." << endl;
         for (ull data : vect)
         {
             fwrite(&data, sizeof(ull), 1, arch);
         }
 
-        std::cout << "Archivo '" << fileName << "' creado y datos escritos con éxito." << std::endl;
+        cout << "Archivo '" << fileName << "' creado y datos escritos con éxito." << endl;
     }
     else
     {
-        std::cerr << "No se pudo abrir el archivo '" << fileName << "'." << std::endl;
+        cerr << "No se pudo abrir el archivo '" << fileName << "'." << endl;
     }
     fclose(arch);
 }
@@ -168,8 +195,8 @@ vector<ull> vectorRTree(vector<Rectangulo> &r_vect, ull m,
 {
     // suponemos que los rectangulos vienen ordenados
 
-    //vector que contendrá los datos a insertar en la iteración actual
-    vector <ull> arr(1,0);
+    // vector que contendrá los datos a insertar en la iteración actual
+    vector<ull> arr(1, 0);
     // se calcula la cantidad de rectángulos totales
     ull R_totales = r_vect.size();
     cout << "Size of vector: " << R_totales << endl;
