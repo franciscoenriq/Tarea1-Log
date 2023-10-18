@@ -29,7 +29,7 @@ ull xy2d(ull n, ull x, ull y)
         rot(s, x, y, rx, ry);
     }
 
-    cout << d << " " << endl;
+    //cout << d << " " << endl;
     return d;
 }
 
@@ -98,7 +98,7 @@ void ordenarHilbert(vector<Rectangulo> &lRect)
     ull alto_espacio = maxY - minY;
     ull nivel = log2(max(ancho_espacio, alto_espacio));
     ull n = pow(2, nivel);
-    cout << n << " " << endl;
+    //cout << n << " " << endl;
 
 
 

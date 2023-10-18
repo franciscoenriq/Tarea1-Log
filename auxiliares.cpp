@@ -33,15 +33,12 @@ ull leerBinFile(char *fileName)
 
     archivo.close();
 
-    // Ahora tienes los enteros almacenados en el vector "enteros".
-    // Puedes realizar operaciones con ellos o mostrarlos.
+    // mostramos lo que habia
     std::cout << "   archivo:     " << endl;
-    std::cout << sizeof(enteros[0]) << " ";
     for (ull num : enteros)
     {
         std::cout << num << " ";
     }
-    // std::cout << sizeof(enteros[0]) << " "<< endl;
     return 0;
 }
 

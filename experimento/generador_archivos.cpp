@@ -30,7 +30,7 @@ vector<ull> generateLRect(ull max_side_length, ull max_value, ull total)
     vector<ull> result;
     for (ull i = 0; i < total; i++)
     {
-        std::cout << i << std::endl;
+        //std::cout << i << std::endl;
         ull inf_izq_x = randomNum(0, max_value);
         ull inf_izq_y = randomNum(0, max_value);
         ull sup_der_x = randomNum(inf_izq_x, inf_izq_x + max_side_length);
@@ -41,7 +41,7 @@ vector<ull> generateLRect(ull max_side_length, ull max_value, ull total)
         result.push_back(sup_der_x);
         result.push_back(sup_der_y);
 
-        cout << Rectangulo(Punto(inf_izq_x, inf_izq_y), Punto(sup_der_x, sup_der_y)) << " " << endl;
+        //cout << Rectangulo(Punto(inf_izq_x, inf_izq_y), Punto(sup_der_x, sup_der_y)) << " " << endl;
     }
 
     return result;
@@ -57,7 +57,7 @@ int main()
     {
         for (ull N : n)
         {
-            std::cout << N << std::endl;
+            //std::cout << N << std::endl;
             // preparamos nombre de archivo a escribir
             ull numero = N;
             char *archivoQbase = "Q_for_n_2_";
@@ -79,7 +79,7 @@ int main()
     {
         for (ull N : n)
         {
-            std::cout << N << std::endl;
+            //std::cout << N << std::endl;
 
             // preparamos nombre de archivo a escribir
             ull numero = N;
