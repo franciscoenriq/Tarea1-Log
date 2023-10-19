@@ -57,6 +57,11 @@ vector<ull> leerBinPorBits(const char *fileName, ull n_valores_desde_el_inicio, 
 
     archivo.close();
 
+    // for(ull valor: resultado){
+    //     cout << "valor leido:" << valor << endl;
+    //     cout << "  " << endl ;
+    //  }
+
     return resultado;
 }
 
@@ -105,7 +110,11 @@ vector<Rectangulo> recuperarRectangulosFromBin(ull n, bool Q)
 
 void busqueda(ull m, Rectangulo C, ull puntero_buscado, ull puntero_anterior, const char *fileName, ull *accesos, vector<Rectangulo> &resultado)
 {
-    if (puntero_buscado < puntero_anterior)
+
+cout << "puntero buscado: " << puntero_buscado << endl;
+cout << "puntero anterior: " << puntero_anterior << endl;
+cout << "relacion punteros: " << (puntero_buscado < puntero_anterior) << endl;
+    if (puntero_buscado > puntero_anterior)
     {
         // si llego acá estoy en una hoja
         cout << "llegamos a una hoja" << endl;
@@ -122,10 +131,13 @@ void busqueda(ull m, Rectangulo C, ull puntero_buscado, ull puntero_anterior, co
         {
             if (rectangulos[i] != 0) // si algo es 0, entonces es lo que usamos para rellenar y lo ignoramos
             {
-                Rectangulo rect(Punto(rectangulos[i], rectangulos[i + 1]), Punto(rectangulos[i + 3], rectangulos[i + 4]));
+                Rectangulo rect(Punto(rectangulos[i], rectangulos[i + 1]), Punto(rectangulos[i + 2], rectangulos[i + 3]));
                 // si el rectangulo intersecta con C, lo agregamos al resultado
                 if (intersectan(C, rect))
                 {
+                    cout << " " << endl;
+                    cout << " intersectaron y aqui deberia guardarlo" << endl;
+                    cout << " " << endl;
                     resultado.push_back(rect);
                 }
             }
@@ -151,13 +163,16 @@ void busqueda(ull m, Rectangulo C, ull puntero_buscado, ull puntero_anterior, co
             cout << "entramos a ver si intersectan..." << endl;
             if (rectangulos[i] != 0) // si algo es 0, entonces es lo que usamos para rellenar y lo ignoramos
             {
-                Rectangulo rect(Punto(rectangulos[i], rectangulos[i + 1]), Punto(rectangulos[i + 3], rectangulos[i + 4]));
+                Rectangulo rect(Punto(rectangulos[i], rectangulos[i + 1]), Punto(rectangulos[i + 2], rectangulos[i + 3]));
                 cout << "rectangulo creado: " << rect << endl;
                 // si el rectangulo intersecta con C, seguimos por esa rama
                 if (intersectan(C, rect))
                 {
                     cout << "intersectaron" << endl;
                     ull nuevo_puntero = referencias[i % m];
+
+cout << "nuevo puntero: " << nuevo_puntero << endl;
+cout << "puntero buscado: " << puntero_buscado << endl;
                     return busqueda(m, C, nuevo_puntero, puntero_buscado, fileName, accesos, resultado);
                 }
                 else{
@@ -199,18 +214,17 @@ int main()
     // suponemos un m, que va a ser el que se uso para hilbert para pribar:
     ull m = 3;
 
-    // ull puntero_a_raiz = leerBinPorBits("HilbertRTree.bin", 1, 1)[0];
-    // ull puntero_actual = puntero_a_raiz;
-    // vector<ull> nodoRaiz = leerBinPorBits("HilbertRTree.bin", puntero_a_raiz, m * 5 - 1);
-
+   
     vector<Rectangulo> resultado;
-    ull accesos; // inicia en 1 porque pedimos la raiz
+    ull accesos = 0; // inicia en 0
     char *fileName = "HilbertRTree.bin";
 
-    ull puntero_a_raiz = leerBinPorBits(fileName, 1, 1)[0];
-    accesos++;
+    cout << "buscamos puntero a raiz" << endl; 
+    ull puntero_a_raiz = leerBinPorBits(fileName, 1, 0)[0];
+    accesos++; // aumenta al pedir la raiz
 
-    Rectangulo Q(Punto(257419, 47360), Punto(280047, 46754));
+
+    Rectangulo Q(Punto(102201, 107976), Punto( 497284, 479555));
     busqueda(m, Q, puntero_a_raiz, puntero_a_raiz, fileName, &accesos, resultado);
 
     cout << "resultado:  " << endl;
@@ -219,6 +233,10 @@ int main()
         cout << rect << endl;
     }
     cout << " " << endl;
+
+    Rectangulo otro(Punto(102201, 107976), Punto( 497284, 479555));
+
+    cout << "intersectan ? :  " << intersectan(Q, otro) << endl;
 
     // =========================================
     return 0;
