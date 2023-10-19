@@ -222,7 +222,7 @@ vector<ull> vectorRTree(vector<Rectangulo> &r_vect, ull m,
                 arr.push_back(0); // Hay menos de k hijos reales para el nodo
             else
                 arr.push_back(offset);
-            offset += 5; // se avanza a la primera posición de la siguiente hoja
+            offset += 4; // se avanza a la primera posición de la siguiente hoja
         }
         for (ull k = 0; k < m; k++)
         { // luego las claves (rectángulos de hijos)
